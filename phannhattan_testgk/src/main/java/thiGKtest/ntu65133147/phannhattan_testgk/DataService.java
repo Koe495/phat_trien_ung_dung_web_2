@@ -16,9 +16,9 @@ public class DataService {
 
     static {
 
-        pages.add(new Page(1,"Home","home","Home page",0));
-        pages.add(new Page(2,"About","about","About us",0));
-        pages.add(new Page(3,"Contact","contact","Contact page",0));
+        pages.add(new Page(1,"Home","home","Home page",01));
+        pages.add(new Page(2,"About","about","About us",02));
+        pages.add(new Page(3,"Contact","contact","Contact page",03));
 
         posts.add(new Post(1,"Spring Boot Tutorial","Content 1",1));
         posts.add(new Post(2,"Java Basic","Content 2",1));
