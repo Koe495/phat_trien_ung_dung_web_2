@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h2>Page List</h2>
+
+<a href="/page/new">Add Page</a>
+
+<table border="1">
+
+<tr>
+<th>Id</th>
+<th>PageName</th>
+<th>ParentPageId</th>
+<th>Action</th>
+</tr>
+
+<tr th:each="p : ${pages}">
+
+<td th:text="${p.id}"></td>
+<td th:text="${p.pageName}"></td>
+<td th:text="${p.parentPageId}"></td>
+
+<td>
+<a th:href="@{'/page/view/'+${p.id}}">view</a>
+<a th:href="@{'/page/delete/'+${p.id}}">delete</a>
+</td>
+
+</tr>
+
+</table>
+
+</body>
+</html>
