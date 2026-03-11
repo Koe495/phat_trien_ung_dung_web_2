@@ -6,12 +6,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
 public class HomeController {
-    @GetMapping("/index")
+    @GetMapping("/dashboard")
     public String dashboard(Model model){
 
         model.addAttribute("username","Tấn Phan");
         model.addAttribute("content","Welcome to Dashboard");
 
-        return "index";
+        return "dashboard";
     }
 }
