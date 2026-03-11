@@ -1,10 +1,10 @@
-package thiGK.ntu65133147test.phannhattan_fitCMS;
+package thiGKtest.ntu65133147.phannhattan_testgk;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class PhannhattanFitCmsApplicationTests {
+class PhannhattanTestgkApplicationTests {
 
 	@Test
 	void contextLoads() {
