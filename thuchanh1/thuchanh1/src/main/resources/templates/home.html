@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Spring Boot Demo</title>
+</head>
+
+<body>
+
+<h2 th:text="${message}"></h2>
+
+<form action="/submit" method="post">
+
+    <input type="text" name="name" placeholder="Enter your name">
+
+    <button type="submit">Send</button>
+
+</form>
+
+</body>
+</html>
