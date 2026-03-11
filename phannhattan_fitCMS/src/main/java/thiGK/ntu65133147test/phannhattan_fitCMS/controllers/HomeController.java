@@ -1,5 +1,17 @@
 package thiGK.ntu65133147test.phannhattan_fitCMS.controllers;
 
-public class HomeController {
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 
+@Controller
+public class HomeController {
+    @GetMapping("/index")
+    public String dashboard(Model model){
+
+        model.addAttribute("username","Tấn Phan");
+        model.addAttribute("content","Welcome to Dashboard");
+
+        return "index";
+    }
 }

@@ -1,10 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
+
 <head>
-<meta charset="UTF-8">
-<title>Insert title here</title>
+    <title>Dashboard</title>
+
+    <style>
+
+        body{
+            margin:0;
+            font-family: Arial;
+        }
+
+        .container{
+            display:grid;
+            grid-template-columns:250px auto;
+            grid-template-rows:80px auto 50px;
+            height:100vh;
+        }
+
+        .header{
+            grid-column:1/3;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            border-bottom:2px solid black;
+            padding:10px 20px;
+        }
+
+        .logo{
+            display:flex;
+            align-items:center;
+            gap:10px;
+        }
+
+        .sidebar{
+            border-right:2px solid black;
+            padding:10px;
+        }
+
+        .menu-item{
+            border:1px solid black;
+            padding:10px;
+            margin-bottom:5px;
+            cursor:pointer;
+        }
+
+        .menu-item:hover{
+            background:#f0f0f0;
+        }
+
+        .content{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            font-size:24px;
+        }
+
+        .footer{
+            grid-column:1/3;
+            border-top:2px solid black;
+            text-align:center;
+            padding:10px;
+        }
+
+    </style>
+
 </head>
+
 <body>
 
+<div class="container">
+
+    <!-- HEADER -->
+    <div class="header">
+
+        <div class="logo">
+            <img src="/images/logo.png" width="50">
+            <div>
+                <b>TRƯỜNG ĐẠI HỌC NHA TRANG</b><br>
+                KHOA CÔNG NGHỆ THÔNG TIN
+            </div>
+        </div>
+
+        <div>
+            <b th:text="${username}">UserName</b>
+        </div>
+
+    </div>
+
+
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+
+        <div class="menu-item">
+            <b>Dashboard</b>
+        </div>
+
+        <div class="menu-item">
+            Topic - List
+        </div>
+
+        <div class="menu-item">
+            Topic - Addnew
+        </div>
+
+        <br>
+
+        <div class="menu-item">
+            Student - List
+        </div>
+
+        <div class="menu-item">
+            Student - Addnew
+        </div>
+
+    </div>
+
+
+    <!-- CONTENT -->
+    <div class="content">
+
+        <div th:text="${content}">
+            Content
+        </div>
+
+    </div>
+
+
+    <!-- FOOTER -->
+    <div class="footer">
+
+        ©2025 by Student Name – FIT NTU
+
+    </div>
+
+</div>
+
 </body>
+
 </html>
