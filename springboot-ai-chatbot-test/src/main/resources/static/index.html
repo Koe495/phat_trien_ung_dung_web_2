@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring AI - Groq Chatbot</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 50px auto; }
+        #chat-box { height: 400px; border: 1px solid #ccc; padding: 10px; overflow-y: scroll; margin-bottom: 10px; border-radius: 5px; }
+        .user-msg { color: blue; margin: 10px 0; font-weight: bold; }
+        .bot-msg { color: green; margin: 10px 0; }
+        input[type="text"] { width: 75%; padding: 10px; }
+        button { padding: 10px 15px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Groq AI Chatbot</h2>
+    <div id="chat-box"></div>
+    
+    <input type="text" id="userInput" placeholder="Nhập câu hỏi của bạn..." onkeypress="handleKeyPress(event)">
+    <button onclick="sendMessage()">Gửi</button>
+
+    <script>
+        async function sendMessage() {
+            const inputField = document.getElementById('userInput');
+            const message = inputField.value.trim();
+            if (!message) return;
+
+            const chatBox = document.getElementById('chat-box');
+            
+            // Hiển thị tin nhắn của người dùng
+            chatBox.innerHTML += `<div class="user-msg">Bạn: ${message}</div>`;
+            inputField.value = '';
+            chatBox.innerHTML += `<div class="bot-msg" id="loading">Đang suy nghĩ...</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            try {
+                // Gọi API backend Spring Boot
+                const response = await fetch(`/api/chat/ask?message=${encodeURIComponent(message)}`);
+                const data = await response.json();
+                
+                // Xóa chữ "Đang suy nghĩ..." và hiển thị kết quả
+                document.getElementById('loading').remove();
+                chatBox.innerHTML += `<div class="bot-msg">Bot: ${data.reply}</div>`;
+            } catch (error) {
+                document.getElementById('loading').remove();
+                chatBox.innerHTML += `<div class="bot-msg" style="color:red;">Lỗi kết nối!</div>`;
+            }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function handleKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        }
+    </script>
+</body>
+</html>
