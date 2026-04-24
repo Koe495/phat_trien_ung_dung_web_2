@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Signal Rhythm UI</title>
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+  <div id="app">
+    <section id="main-menu" class="screen active">
+      <div class="menu-card">
+        <p class="brand">SIGNAL RHYTHM</p>
+        <h1>Main Menu</h1>
+
+        <div class="menu-group">
+          <label for="player-name">Player Name</label>
+          <input id="player-name" type="text" value="player1">
+        </div>
+
+        <div class="menu-group">
+          <label for="song-select">Choose Song</label>
+          <select id="song-select">
+            <option>Signal Transmission</option>
+          </select>
+        </div>
+
+        <div class="menu-group">
+          <label for="difficulty-select">Difficulty</label>
+          <select id="difficulty-select">
+            <option>Easy</option>
+            <option>Hard</option>
+          </select>
+        </div>
+
+        <div class="menu-actions">
+          <button id="start-btn" class="btn btn-primary">Start Game</button>
+          <button class="btn btn-secondary">Login / Register</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen">
+      <header class="top-hud">
+        <div class="hud-item">
+          <span>Score</span>
+          <strong id="score">850</strong>
+        </div>
+        <div class="hud-item">
+          <span>Combo</span>
+          <strong id="combo">12</strong>
+        </div>
+        <div class="hud-item">
+          <span>Accuracy</span>
+          <strong id="accuracy">91.5%</strong>
+        </div>
+        <button id="back-btn" class="btn btn-small">Back To Menu</button>
+      </header>
+
+      <main class="gameplay-layout">
+        <section class="lane lane-left">
+          <h2>Left Hand</h2>
+          <div class="direction-wheel">
+            <div class="center-dot active"></div>
+            <div class="dir dir-1">1</div>
+            <div class="dir dir-2">2</div>
+            <div class="dir dir-3">3</div>
+            <div class="dir dir-4">4</div>
+            <div class="dir dir-5">5</div>
+            <div class="dir dir-6">6</div>
+            <div class="dir dir-7">7</div>
+            <div class="dir dir-8 active-dir">8</div>
+          </div>
+          <p class="feedback perfect">Perfect</p>
+        </section>
+
+        <section class="lane lane-center">
+          <h2>Center Character</h2>
+          <div class="center-character">A</div>
+          <div class="timing-info">
+            <span>Perfect: ±80ms</span>
+            <span>Good: ±150ms</span>
+          </div>
+        </section>
+
+        <section class="lane lane-right">
+          <h2>Right Hand</h2>
+          <div class="direction-wheel">
+            <div class="center-dot"></div>
+            <div class="dir dir-1">1</div>
+            <div class="dir dir-2">2</div>
+            <div class="dir dir-3">3</div>
+            <div class="dir dir-4 active-dir">4</div>
+            <div class="dir dir-5">5</div>
+            <div class="dir dir-6">6</div>
+            <div class="dir dir-7">7</div>
+            <div class="dir dir-8">8</div>
+          </div>
+          <p class="feedback good">Good</p>
+        </section>
+      </main>
+
+      <footer class="preview-bar">
+        <h3>Next 2 beats preview</h3>
+        <div class="preview-notes">
+          <span class="preview-note">[L:2] [C:3] [R:1]</span>
+          <span class="preview-note">[L:4] [C:K] [R:3]</span>
+        </div>
+      </footer>
+    </section>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>
