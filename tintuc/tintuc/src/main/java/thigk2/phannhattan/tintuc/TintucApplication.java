@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class SpringbootThigk2Application {
+public class TintucApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(SpringbootThigk2Application.class, args);
+		SpringApplication.run(TintucApplication.class, args);
 	}
 
 }

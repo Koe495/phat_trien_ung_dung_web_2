@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Chi Tiết Tin Tức</title>
+</head>
+<body>
+    <h1 th:text="${tin.tieuDe}">Tiêu đề tin</h1>
+    <p><strong>Thể loại: </strong> <span th:text="${tin.theLoaiTin != null ? tin.theLoaiTin.tenTheLoai : 'N/A'}"></span></p>
+    <p><strong>Người đăng: </strong> <span th:text="${tin.nguoiDung != null ? tin.nguoiDung.tenDangNhap : 'N/A'}"></span></p>
+    <hr/>
+    <div th:text="${tin.noiDung}">Nội dung bài viết...</div>
+    <br/>
+    <a th:href="@{/tin}">Quay lại danh sách</a>
+</body>
+</html>

@@ -21,5 +21,4 @@ public class Tin {
     @ManyToOne
     @JoinColumn(name = "nguoi_dung_id")
     private NguoiDung nguoiDung;
-
 }

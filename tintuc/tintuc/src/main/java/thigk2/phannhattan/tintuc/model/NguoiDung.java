@@ -18,4 +18,5 @@ public class NguoiDung {
     @JsonIgnore
     private List<Tin> danhSachTin;
 
+    // TODO: Generate Getters và Setters
 }
