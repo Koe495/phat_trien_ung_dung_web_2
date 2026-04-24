@@ -9,5 +9,6 @@
 	</classpathentry>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
 	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.module.container"/>
+	<classpathentry kind="src" path="phannhattan/src/main/java/thigk2/phannhattan"/>
 	<classpathentry kind="output" path="build/classes"/>
 </classpath>
