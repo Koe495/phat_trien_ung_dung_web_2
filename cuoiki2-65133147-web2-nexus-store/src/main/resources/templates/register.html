@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Tạo tài khoản Nexus ID mới</title>
+    <link rel="stylesheet" th:href="@{/css/register.css}">
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <svg class="custom-cursor-hexagon" id="customCursorHexagon" viewBox="0 0 24 24">
+            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Header tối giản -->
+    <header class="register-header">
+        <a th:href="@{/}" class="logo-area">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            NEXUS
+        </a>
+    </header>
+
+    <!-- Main Container -->
+    <main class="register-main">
+        <div class="register-card">
+            
+            <div class="card-header">
+                <h1 class="card-title">Tạo Nexus ID</h1>
+                <p class="card-subtitle">Đã có tài khoản Nexus ID? <a th:href="@{login}">Đăng nhập ngay</a></p>
+            </div>
+
+            <form id="registerForm" onsubmit="event.preventDefault();" autocomplete="on">
+                
+                <!-- Họ & Tên Song Song -->
+                <div class="form-row">
+                    <div class="form-group">
+                        <input type="text" id="lastName" class="form-input" placeholder=" " required autocomplete="family-name">
+                        <label for="lastName" class="form-label" id="label-lastName">Họ</label>
+                        <div class="notched-outline">
+                            <div class="notched-outline-leading"></div>
+                            <div class="notched-outline-notch" id="notch-lastName"></div>
+                            <div class="notched-outline-trailing"></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="firstName" class="form-input" placeholder=" " required autocomplete="given-name">
+                        <label for="firstName" class="form-label" id="label-firstName">Tên</label>
+                        <div class="notched-outline">
+                            <div class="notched-outline-leading"></div>
+                            <div class="notched-outline-notch" id="notch-firstName"></div>
+                            <div class="notched-outline-trailing"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Phone Group -->
+                <div class="form-group">
+                    <input type="tel" id="phone" class="form-input" placeholder=" " required autocomplete="tel">
+                    <label for="phone" class="form-label" id="label-phone">Số điện thoại</label>
+                    <div class="notched-outline">
+                        <div class="notched-outline-leading"></div>
+                        <div class="notched-outline-notch" id="notch-phone"></div>
+                        <div class="notched-outline-trailing"></div>
+                    </div>
+                </div>
+
+                <!-- Email Group -->
+                <div class="form-group">
+                    <input type="email" id="email" class="form-input" placeholder=" " required autocomplete="email">
+                    <label for="email" class="form-label" id="label-email">Địa chỉ Email</label>
+                    <div class="notched-outline">
+                        <div class="notched-outline-leading"></div>
+                        <div class="notched-outline-notch" id="notch-email"></div>
+                        <div class="notched-outline-trailing"></div>
+                    </div>
+                </div>
+
+                <!-- Password Group -->
+                <div class="form-group">
+                    <input type="password" id="password" class="form-input" placeholder=" " required autocomplete="new-password" data-lpignore="true" data-bypass="true" data-dashlane-ignore="true">
+                    <label for="password" class="form-label" id="label-password">Mật khẩu</label>
+                    
+                    <button type="button" class="toggle-password" id="togglePasswordBtn" aria-label="Hiện mật khẩu">
+                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    </button>
+
+                    <div class="notched-outline">
+                        <div class="notched-outline-leading"></div>
+                        <div class="notched-outline-notch" id="notch-password"></div>
+                        <div class="notched-outline-trailing"></div>
+                    </div>
+                </div>
+
+                <!-- Điều khoản thỏa thuận -->
+                <label class="form-agreement">
+                    <input type="checkbox" id="agree" required>
+                    <span>Tôi đã đọc và đồng ý với các <a href="#" target="_blank">Điều khoản sử dụng</a> và <a href="#" target="_blank">Chính sách bảo mật</a> của NEXUS ID.</span>
+                </label>
+
+                <!-- Submit Button -->
+                <button type="submit" class="submit-btn" id="submitBtn">Tạo tài khoản</button>
+
+            </form>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="store-footer">
+        <p>© 2026 NEXUS Global Store. Bản quyền thiết kế tối giản thuộc về hệ sinh thái di động NEXUS.</p>
+    </footer>
+
+    <script th:src="@{/js/register.js}"></script>
+
+</body>
+</html>
