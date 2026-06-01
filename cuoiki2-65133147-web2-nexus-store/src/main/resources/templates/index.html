@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Thế hệ Smartphone Tương lai</title>
+	<link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body class="rail-collapsed">
+
+    <!-- Custom Cursor DOM Elements -->
+    <div class="custom-cursor" id="customCursor">
+        <svg class="custom-cursor-hexagon" id="customCursorHexagon" viewBox="0 0 24 24">
+            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Sticky Header -->
+    <header class="main-header">
+        <div class="logo-area">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            NEXUS
+        </div>
+        
+        <!-- Primary Menu Navigation: Hoạt động như liên kết trang thật (Không dùng mỏ neo để tránh nhảy cuộn) -->
+        <nav class="primary-nav" id="topNav">
+            <a th:href="@{/}" data-text="Trang chủ" class="active"><span>Trang chủ</span></a>
+            <a th:href="@{/products}" data-text="Sản phẩm"><span>Sản phẩm</span></a>
+            <a th:href="@{/support}" data-text="Hỗ trợ"><span>Hỗ trợ</span></a>
+        </nav>
+        
+        <div class="header-actions">
+            <!-- Expandable Search Bar -->
+            <div class="search-wrapper" id="searchWrapper">
+                <input type="text" class="search-input" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+                <button class="icon-btn search-btn" id="searchBtn" aria-label="Tìm kiếm">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </div>
+            
+            <button class="icon-btn" aria-label="Giỏ hàng">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            </button>
+            <button class="icon-btn" aria-label="Tài khoản">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </button>
+        </div>
+    </header>
+
+    <div class="app-layout">
+        <!-- Floating Navigation Rail -->
+        <aside class="nav-rail" id="mainRail">
+            <div class="rail-header">
+                <button class="rail-toggle-btn" id="railToggle" title="Thu gọn/Mở rộng Sidebar">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                </button>
+            </div>
+            
+            <div class="rail-scroll-area" id="railScrollArea">
+                <div class="rail-items-container">
+                    <div class="sliding-pill" id="slidingPill"></div>
+                    
+                    <a href="#overview" class="rail-item active" data-target="overview">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                        <span>Tổng quan</span>
+                    </a>
+                    <a href="#featured" class="rail-item" data-target="featured">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        <span>Nổi bật</span>
+                    </a>
+                    <a href="#features" class="rail-item" data-target="features">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"></path><polyline points="14 2 14 8 20 8"></polyline><path d="m9 15 2 2 4-4"></path></svg>
+                        <span>Tính năng</span>
+                    </a>
+                    <a href="#products" class="rail-item" data-target="products">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
+                            <line x1="12" y1="22.08" x2="12" y2="12"></line>
+                        </svg>
+                        <span>Sản phẩm</span>
+                    </a>
+                    <a href="#compare" class="rail-item" data-target="compare">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                        <span>So sánh</span>
+                    </a>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            
+            <!-- SECTION TỔNG QUAN (KHÔNG STACK) -->
+            <section id="overview" class="hero-overview">
+                <div class="hero-overview-content">
+                    <h1 class="hero-overview-title">Titanium.<br>Thật mạnh mẽ. Thật nhẹ.<br>Thật Pro.</h1>
+                    <p class="hero-overview-subtitle">Đón chào tiêu chuẩn mới của công nghệ di động.</p>
+                    <div class="hero-overview-actions">
+                        <a href="#products" class="btn-buy">Mua</a>
+                        <a href="#featured" class="link-learn">Tìm hiểu thêm &rsaquo;</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- BẮT ĐẦU HIỆU ỨNG CARD STACKING -->
+            <section id="featured" class="stacked-card">
+                <div class="section-container">
+                    <h1 class="section-title">Khám phá Tương lai.</h1>
+                    
+                    <div class="huge-tabs-nav" id="heroTabs">
+                        <button class="tab-btn active" data-target="tab-nexus-pro">Nexus X Pro</button>
+                        <button class="tab-btn" data-target="tab-nexus-fold">Nexus Fold 2</button>
+                        <button class="tab-btn" data-target="tab-nexus-lite">Nexus Lite Z</button>
+                    </div>
+
+                    <div class="tab-content-container">
+                        <!-- Pane 1: Nexus X Pro -->
+                        <div class="tab-pane active" id="tab-nexus-pro">
+                            <div class="showcase-text">
+                                <span class="badge">Mới ra mắt</span>
+                                <h2>Sức mạnh tuyệt đối.<br>Không giới hạn.</h2>
+                                <p>Trải nghiệm mẫu điện thoại thông minh tối tân với chip Neural Engine tùy chỉnh. Trang bị hệ thống camera 200MP đột phá cùng khung viền titan chuẩn hàng không vũ trụ.</p>
+                                <div class="action-btns">
+                                    <button class="btn btn-primary">Mua ngay</button>
+                                    <button class="btn btn-outline">Tìm hiểu thêm ></button>
+                                </div>
+                            </div>
+                            <div class="showcase-visual">
+                                <div class="phone-mockup">
+                                    <div class="phone-screen"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pane 2: Nexus Fold 2 -->
+                        <div class="tab-pane" id="tab-nexus-fold">
+                            <div class="showcase-text">
+                                <span class="badge">Đột phá</span>
+                                <h2>Mở rộng<br>Tầm nhìn.</h2>
+                                <p>Chiếc máy tính bảng nằm gọn trong túi bạn. Màn hình OLED động 8-inch gập phẳng hoàn hảo nhờ công nghệ bản lề giọt nước không khe hở.</p>
+                                <div class="action-btns">
+                                    <button class="btn btn-primary">Đặt trước</button>
+                                    <button class="btn btn-outline">Xem video ></button>
+                                </div>
+                            </div>
+                            <div class="showcase-visual">
+                                <div class="phone-mockup" style="width: 380px;">
+                                    <div class="phone-screen"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Pane 3: Nexus Lite Z -->
+                        <div class="tab-pane" id="tab-nexus-lite">
+                            <div class="showcase-text">
+                                <span class="badge">Dòng Tiêu chuẩn</span>
+                                <h2>Sắc màu rực rỡ.<br>Mức giá tuyệt vời.</h2>
+                                <p>Mọi thứ bạn cần, không thừa thãi. Thời lượng pin trâu 2 ngày, màu sắc sống động và hiệu năng mượt mà với mức giá chỉ từ 12.490.000₫.</p>
+                                <div class="action-btns">
+                                    <button class="btn btn-primary">Mua ngay Lite Z</button>
+                                </div>
+                            </div>
+                            <div class="showcase-visual">
+                                <div class="phone-mockup">
+                                    <div class="phone-screen"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TÍNH NĂNG (STICKY STACKING CARD 2) -->
+            <section id="features" class="feature-showcase stacked-card">
+                <div class="section-container">
+                    <h2>Camera chuẩn Pro.<br>Chụp trọn mọi chi tiết.</h2>
+                    <p>Từ khung cảnh ngoạn mục đến chân dung ấn tượng, hệ thống camera tiên tiến mới bứt phá mọi giới hạn trên điện thoại thông minh.</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">48MP</div>
+                            <div class="stat-label">Độ phân giải Camera chính</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">120mm</div>
+                            <div class="stat-label">Ống kính Telephoto Pro</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">ƒ/1.78</div>
+                            <div class="stat-label">Khẩu độ Siêu rộng</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SẢN PHẨM (STICKY STACKING CARD 3) -->
+            <section id="products" class="stacked-card">
+                <div class="section-container">
+                    <h1 class="section-title">Hệ sinh thái Sản phẩm</h1>
+                    
+                    <div class="product-segment">
+                        <h3 class="segment-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                            Điện thoại thông minh
+                        </h3>
+                        <div class="grid-cards">
+                            <div class="card">
+                                <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg></div>
+                                <h3>Dòng Pro</h3>
+                                <p style="color: var(--text-muted); margin-top: 10px;">Dành cho nhà sáng tạo và người dùng chuyên nghiệp.</p>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg></div>
+                                <h3>Dòng Tiêu chuẩn</h3>
+                                <p style="color: var(--text-muted); margin-top: 10px;">Sự cân bằng hoàn hảo giữa tính năng và giá cả.</p>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect></svg></div>
+                                <h3>Dòng Z Màn hình gập</h3>
+                                <p style="color: var(--text-muted); margin-top: 10px;">Tương lai của thiết kế di động.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="product-segment">
+                        <h3 class="segment-title">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="7"></circle><polyline points="12 9 12 12 13.5 13.5"></polyline><path d="M16.51 17.35l-.35 3.83a2 2 0 0 1-2 1.82H9.83a2 2 0 0 1-2-1.82l-.35-3.83m.01-10.7l.35-3.83A2 2 0 0 1 9.83 1h4.35a2 2 0 0 1 2 1.82l.35 3.83"></path></svg>
+                            Thiết bị đeo & Sức khỏe
+                        </h3>
+                        <div class="grid-cards">
+                            <div class="card">
+                                <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="6" y="2" width="12" height="20" rx="2" ry="2"></rect><path d="M12 18h.01"></path></svg></div>
+                                <h3>Nexus Watch 4</h3>
+                                <p style="color: var(--text-muted); margin-top: 10px;">Theo dõi sức khỏe nâng cao ngay trên cổ tay bạn.</p>
+                            </div>
+                            <div class="card">
+                                <div class="card-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg></div>
+                                <h3>FitBand Pro</h3>
+                                <p style="color: var(--text-muted); margin-top: 10px;">Thiết kế tối giản, tạo động lực rèn luyện tối đa.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+            
+            <!-- SO SÁNH (STICKY STACKING CARD CUỐI / ĐÈ TRÊN CÙNG) -->
+            <section id="compare" class="stacked-card">
+                <div class="section-container">
+                    <h2 class="section-title">So sánh các mẫu</h2>
+                    <p style="color: var(--text-muted); max-width: 600px; font-size: 1.15rem; line-height: 1.6; margin-bottom: 3rem;">
+                        Không chắc chắn chiếc điện thoại nào phù hợp với bạn? Sử dụng công cụ so sánh của chúng tôi để xem chi tiết thông số kỹ thuật bên cạnh nhau.
+                    </p>
+                    
+                    <div class="grid-cards">
+                        <div class="card">
+                            <h3>Bắt đầu So sánh</h3>
+                            <p style="color: var(--text-muted); margin-top: 10px; margin-bottom: 1.5rem;">Lựa chọn tối đa 3 thiết bị để tìm điểm khác biệt.</p>
+                            <button class="btn btn-primary" style="padding: 0.6rem 1.2rem; font-size: 0.9rem;">Thêm thiết bị</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+	<script th:src="@{/js/index.js}"></script>
+</body>
+</html>
