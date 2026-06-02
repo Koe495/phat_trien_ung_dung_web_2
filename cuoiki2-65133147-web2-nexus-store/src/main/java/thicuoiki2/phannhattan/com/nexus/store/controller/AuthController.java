@@ -58,6 +58,10 @@ public class AuthController {
             // Lưu thông tin người dùng đã xác thực vào Session của Servlet
             session.setAttribute("loggedInUser", authenticatedUser);
             
+            if ("admin".equalsIgnoreCase(authenticatedUser.getRole())) {
+                return "redirect:/admin";
+            }
+
             // Quay về trang chủ sau khi đăng nhập thành công
             return "redirect:/";
         } catch (Exception e) {

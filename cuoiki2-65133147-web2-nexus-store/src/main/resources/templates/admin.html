@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin NEXUS - Quản lý</title>
+    <link rel="stylesheet" th:href="@{/css/admin.css}">
+</head>
+<body>
+
+<div class="page-header">
+    <div class="header-left">
+        <div class="logo">NEXUS Admin</div>
+        <p class="subtitle">Quản lý thông tin user và sản phẩm</p>
+    </div>
+    <div class="header-actions">
+        <span class="user-role">Admin: <strong th:text="${loggedInUser.firstName + ' ' + loggedInUser.lastName}"></strong></span>
+        <a th:href="@{/logout}" class="btn btn-ghost">Đăng xuất</a>
+    </div>
+</div>
+
+<div class="tabs">
+    <a href="#users" class="tab active">Thông tin user</a>
+    <a href="#products" class="tab">Thông tin sản phẩm</a>
+</div>
+
+<div class="section" id="users">
+    <div class="section-header">
+        <div>
+            <h2>Quản lý user</h2>
+            <p>Thêm, sửa, xoá người dùng và phân quyền admin/customer.</p>
+        </div>
+        <div class="action-note">Chú ý: nếu tạo user mới mà không nhập mật khẩu, mật khẩu mặc định là <strong>123456</strong>.</div>
+    </div>
+
+    <div th:if="${successMsg != null}" class="message success" th:text="${successMsg}"></div>
+    <div th:if="${errorMsg != null}" class="message error" th:text="${errorMsg}"></div>
+
+    <form class="admin-form" th:action="@{/admin/users/save}" method="post">
+        <input type="hidden" name="id" th:value="${editUser != null ? editUser.id : ''}" />
+        <div class="form-grid">
+            <label>
+                Họ
+                <input type="text" name="lastName" th:value="${editUser != null ? editUser.lastName : ''}" required>
+            </label>
+            <label>
+                Tên
+                <input type="text" name="firstName" th:value="${editUser != null ? editUser.firstName : ''}" required>
+            </label>
+            <label>
+                Email
+                <input type="email" name="email" th:value="${editUser != null ? editUser.email : ''}" required>
+            </label>
+            <label>
+                Số điện thoại
+                <input type="text" name="phone" th:value="${editUser != null ? editUser.phone : ''}">
+            </label>
+            <label>
+                Vai trò
+                <select name="role" required>
+                    <option value="customer" th:selected="${editUser != null and editUser.role == 'customer'}">customer</option>
+                    <option value="admin" th:selected="${editUser != null and editUser.role == 'admin'}">admin</option>
+                </select>
+            </label>
+            <label>
+                Mật khẩu
+                <input type="password" name="password" placeholder="Điền nếu muốn đổi / tạo mới">
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Lưu user</button>
+            <a th:if="${editUser != null}" th:href="@{/admin#users}" class="btn btn-secondary">Huỷ chỉnh sửa</a>
+        </div>
+    </form>
+
+    <div class="filter-panel">
+        <form class="filter-form" th:action="@{/admin#users}" method="get">
+            <input type="text" name="userQuery" class="filter-input" placeholder="Tìm theo tên, email hoặc số điện thoại" th:value="${userQuery}">
+            <select name="userRole" class="filter-select">
+                <option value="" th:selected="${userRole == null or userRole == ''}">Tất cả vai trò</option>
+                <option value="customer" th:selected="${userRole == 'customer'}">Customer</option>
+                <option value="admin" th:selected="${userRole == 'admin'}">Admin</option>
+            </select>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Áp dụng</button>
+                <a th:href="@{/admin#users}" class="btn btn-secondary">Xóa bộ lọc</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Họ tên</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Vai trò</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${users}">
+                    <td th:text="${user.id}"></td>
+                    <td th:text="${user.lastName + ' ' + user.firstName}"></td>
+                    <td th:text="${user.email}"></td>
+                    <td th:text="${user.phone}"></td>
+                    <td th:text="${user.role}"></td>
+                    <td class="actions-cell">
+                        <a th:href="@{/admin(editUserId=${user.id})} + '#users'" class="action-link">Sửa</a>
+                        <form th:action="@{/admin/users/delete}" method="post" class="inline-form">
+                            <input type="hidden" name="id" th:value="${user.id}" />
+                            <button type="submit" class="action-link danger">Xoá</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="section" id="products">
+    <div class="section-header">
+        <div>
+            <h2>Quản lý sản phẩm</h2>
+            <p>Thêm, sửa, xoá sản phẩm, bao gồm giá, trạng thái và danh mục.</p>
+        </div>
+        <div class="action-note">Nếu không điền slug, hệ thống tự sinh từ tên sản phẩm.</div>
+    </div>
+
+    <form class="admin-form" th:action="@{/admin/products/save}" method="post">
+        <input type="hidden" name="id" th:value="${editProduct != null ? editProduct.id : ''}" />
+        <div class="form-grid">
+            <label>
+                Tên sản phẩm
+                <input type="text" name="name" th:value="${editProduct != null ? editProduct.name : ''}" required>
+            </label>
+            <label>
+                Slug
+                <input type="text" name="slug" th:value="${editProduct != null ? editProduct.slug : ''}">
+            </label>
+            <label>
+                Giá
+                <input type="number" name="price" step="0.01" th:value="${editProduct != null ? editProduct.price : ''}" required>
+            </label>
+            <label>
+                Nhãn
+                <input type="text" name="badge" th:value="${editProduct != null ? editProduct.badge : ''}">
+            </label>
+            <label>
+                Thumbnail BG
+                <input type="text" name="thumbnailBg" th:value="${editProduct != null ? editProduct.thumbnailBg : ''}">
+            </label>
+            <label>
+                Trạng thái
+                <select name="status" required>
+                    <option value="active" th:selected="${editProduct != null and editProduct.status == 'active'}">active</option>
+                    <option value="inactive" th:selected="${editProduct != null and editProduct.status == 'inactive'}">inactive</option>
+                </select>
+            </label>
+            <label>
+                Danh mục
+                <select name="categoryId" required>
+                    <option th:each="category : ${categories}"
+                            th:value="${category.id}"
+                            th:text="${category.name}"
+                            th:selected="${editProduct != null and editProduct.category.id == category.id}">
+                    </option>
+                </select>
+            </label>
+            <label class="full-width">
+                Mô tả ngắn
+                <textarea name="spec" rows="3" th:text="${editProduct != null ? editProduct.spec : ''}"></textarea>
+            </label>
+        </div>
+        <div class="form-actions">
+            <button type="submit" class="btn btn-primary">Lưu sản phẩm</button>
+            <a th:if="${editProduct != null}" th:href="@{/admin#products}" class="btn btn-secondary">Huỷ chỉnh sửa</a>
+        </div>
+    </form>
+
+    <div class="filter-panel">
+        <form class="filter-form" th:action="@{/admin#products}" method="get">
+            <input type="text" name="productQuery" class="filter-input" placeholder="Tìm theo tên, slug hoặc mô tả" th:value="${productQuery}">
+            <select name="productStatus" class="filter-select">
+                <option value="" th:selected="${productStatus == null or productStatus == ''}">Tất cả trạng thái</option>
+                <option value="active" th:selected="${productStatus == 'active'}">Active</option>
+                <option value="inactive" th:selected="${productStatus == 'inactive'}">Inactive</option>
+            </select>
+            <select name="productCategoryId" class="filter-select">
+                <option value="" th:selected="${productCategoryId == null}">Tất cả danh mục</option>
+                <option th:each="category : ${categories}"
+                        th:value="${category.id}"
+                        th:text="${category.name}"
+                        th:selected="${productCategoryId != null and productCategoryId == category.id}">
+                </option>
+            </select>
+            <div class="filter-actions">
+                <button type="submit" class="btn btn-primary">Áp dụng</button>
+                <a th:href="@{/admin#products}" class="btn btn-secondary">Xóa bộ lọc</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Tên</th>
+                    <th>Slug</th>
+                    <th>Danh mục</th>
+                    <th>Giá</th>
+                    <th>Trạng thái</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${products}">
+                    <td th:text="${product.id}"></td>
+                    <td th:text="${product.name}"></td>
+                    <td th:text="${product.slug}"></td>
+                    <td th:text="${product.category.name}"></td>
+                    <td th:text="${#numbers.formatDecimal(product.price, 0, 'COMMA', 2, 'POINT')}"></td>
+                    <td th:text="${product.status}"></td>
+                    <td class="actions-cell">
+                        <a th:href="@{/admin(editProductId=${product.id})} + '#products'" class="action-link">Sửa</a>
+                        <form th:action="@{/admin/products/delete}" method="post" class="inline-form">
+                            <input type="hidden" name="id" th:value="${product.id}" />
+                            <button type="submit" class="action-link danger">Xoá</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script th:src="@{/js/admin.js}"></script>
+</body>
+</html>
