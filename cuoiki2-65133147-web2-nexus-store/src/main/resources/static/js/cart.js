@@ -28,10 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.addEventListener('mouseout',  e => { if (e.target.closest(clickable)) { const to = e.relatedTarget; if (!to || !to.closest(clickable)) cursorHexagon.classList.remove('hovering'); } });
 
     /* --- 2. Checkbox logic + live subtotal --- */
-    const selectAll      = document.getElementById('selectAllCheckbox');
-    const checkboxes     = document.querySelectorAll('.item-checkbox');
-    const btnTop         = document.getElementById('btnCheckoutSelected');
-    const btnSummary     = document.getElementById('btnCheckoutSummary');
+    const selectAll       = document.getElementById('selectAllCheckbox');
+    const checkboxes      = document.querySelectorAll('.item-checkbox');
+    const btnSummary      = document.getElementById('btnCheckoutSummary');
     const summarySubtotal = document.getElementById('summarySubtotal');
     const summaryTotal    = document.getElementById('summaryTotal');
     const summaryNote     = document.getElementById('summaryNote');
@@ -51,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const hasAny  = checked.length > 0;
 
         // Buttons
-        if (btnTop)     btnTop.disabled     = !hasAny;
         if (btnSummary) btnSummary.disabled = !hasAny;
 
         // Note

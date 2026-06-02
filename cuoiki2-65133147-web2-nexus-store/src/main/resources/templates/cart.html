@@ -59,17 +59,6 @@
             <!-- Form bọc toàn bộ danh sách để submit các item đã chọn -->
             <form id="cartSelectForm" th:action="@{/checkout}" method="GET">
 
-                <!-- Toolbar chọn tất cả + nút checkout -->
-                <div class="cart-toolbar">
-                    <label class="select-all-label">
-                        <input type="checkbox" id="selectAllCheckbox">
-                        <span>Chọn tất cả</span>
-                    </label>
-                    <button type="submit" class="btn-checkout-selected" id="btnCheckoutSelected" disabled>
-                        Thanh toán mục đã chọn
-                    </button>
-                </div>
-
                 <!-- Danh sách sản phẩm -->
                 <div class="cart-items">
                     <div class="cart-item" th:each="item : ${cartItems}" th:data-id="${item.id}">
@@ -127,6 +116,15 @@
             <!-- Tổng quan đơn hàng -->
             <div class="order-summary">
                 <h2 class="summary-title">Tổng quan đơn hàng</h2>
+
+                <!-- Chọn tất cả — nằm trong summary -->
+                <label class="select-all-label">
+                    <input type="checkbox" id="selectAllCheckbox">
+                    <span>Chọn tất cả</span>
+                </label>
+
+                <div class="summary-divider"></div>
+
                 <div class="summary-row"><span>Tạm tính</span>
                     <span id="summarySubtotal"
                           th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
@@ -158,4 +156,4 @@
 
     <script th:src="@{/js/cart.js}"></script>
 </body>
-</html>
+</html>		

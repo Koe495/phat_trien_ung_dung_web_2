@@ -119,6 +119,7 @@ public class ShopController {
         model.addAttribute("subtotal",      cartService.getSubtotal(items));
         model.addAttribute("selectedItems", selectedItems);
         model.addAttribute("savedCards",    paymentService.getCardsByUser(loggedInUser));
+        model.addAttribute("savedBanks",    paymentService.getBanksByUser(loggedInUser));
         model.addAttribute("loggedInUser",  loggedInUser);
         return "checkout";
     }
@@ -161,6 +162,7 @@ public class ShopController {
             model.addAttribute("subtotal",      cartService.getSubtotal(items));
             model.addAttribute("selectedItems", selectedItems);
             model.addAttribute("savedCards",    paymentService.getCardsByUser(loggedInUser));
+            model.addAttribute("savedBanks",    paymentService.getBanksByUser(loggedInUser));
             model.addAttribute("loggedInUser",  loggedInUser);
             return "checkout";
         }

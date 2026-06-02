@@ -125,6 +125,7 @@
                     <h2 class="section-title" style="margin-top:2rem;">Phương thức thanh toán</h2>
 
                     <div class="payment-methods">
+                        <!-- Thẻ đã lưu -->
                         <th:block th:if="${loggedInUser != null and savedCards != null and !savedCards.isEmpty()}">
                             <label class="payment-option" th:each="card : ${savedCards}">
                                 <input type="radio" name="payment" value="saved_card"
@@ -134,13 +135,28 @@
                             </label>
                         </th:block>
 
+                        <!-- Ngân hàng đã lưu -->
+                        <th:block th:if="${loggedInUser != null and savedBanks != null and !savedBanks.isEmpty()}">
+                            <label class="payment-option" th:each="bank : ${savedBanks}">
+                                <input type="radio" name="payment" value="saved_bank"
+                                       th:data-bank-id="${bank.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                <div class="payment-option-detail">
+                                    <span class="payment-option-name" th:text="${bank.bankName}"></span>
+                                    <span class="payment-option-sub" th:text="${bank.bankAccount}"></span>
+                                </div>
+                            </label>
+                        </th:block>
+
+                        <!-- Thẻ tín dụng nhập mới -->
                         <label class="payment-option">
                             <input type="radio" name="payment" value="credit"
-                                   th:checked="${savedCards == null or savedCards.isEmpty()}">
+                                   th:checked="${(savedCards == null or savedCards.isEmpty()) and (savedBanks == null or savedBanks.isEmpty())}">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                             <span>Thẻ tín dụng / Thẻ ghi nợ</span>
                         </label>
 
+                        <!-- COD -->
                         <label class="payment-option">
                             <input type="radio" name="payment" value="cod">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
