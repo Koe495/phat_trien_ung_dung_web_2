@@ -690,7 +690,267 @@ body {
 }
 
 /* ==========================================================================
-   8. FOOTER
+   8. SAVED CARDS GRID
+   ========================================================================== */
+.saved-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.saved-card-item {
+    aspect-ratio: 1.586 / 1;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+}
+
+.saved-card-item:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.15); }
+
+.saved-card-inner {
+    width: 100%; height: 100%;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    border-radius: 16px;
+    padding: 1.2rem;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+}
+
+.saved-card-inner::before {
+    content: '';
+    position: absolute; top: -40px; right: -40px;
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+
+.saved-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.saved-card-chip svg { width: 28px; height: 22px; display: block; }
+
+.saved-card-network {
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+}
+
+.saved-card-number {
+    font-size: 0.95rem;
+    letter-spacing: 0.15em;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+}
+
+.saved-card-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.saved-card-holder {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    max-width: 120px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.saved-card-expiry {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: rgba(255,255,255,0.8);
+    letter-spacing: 0.05em;
+}
+
+/* Nút thêm thẻ mới */
+.add-card-btn { border: 2px dashed var(--border-light); border-radius: 16px; background: transparent !important; }
+.add-card-btn:hover { border-color: var(--primary); background: var(--primary-glow) !important; transform: translateY(-4px); }
+
+.add-card-inner {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    color: var(--text-muted);
+}
+
+.add-card-btn:hover .add-card-inner { color: var(--primary); }
+.add-card-inner svg { width: 28px; height: 28px; }
+.add-card-inner span { font-size: 0.85rem; font-weight: 500; }
+
+/* ==========================================================================
+   9. SAVED BANKS LIST
+   ========================================================================== */
+.saved-banks-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.saved-bank-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--bg-base);
+    border-radius: 16px;
+    cursor: pointer;
+    transition: var(--transition-smooth);
+    border: 1.5px solid transparent;
+}
+
+.saved-bank-item:hover { border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 4px 16px rgba(0,113,227,0.08); }
+
+.bank-item-icon {
+    width: 42px; height: 42px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #1e3c72, #2a5298);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.bank-item-icon svg { width: 18px; height: 18px; stroke: #fff; }
+.bank-item-icon.add-icon { background: var(--bg-surface); border: 1.5px dashed var(--border-light); }
+.bank-item-icon.add-icon svg { stroke: var(--text-muted); }
+.add-bank-btn:hover .add-icon { border-color: var(--primary); }
+.add-bank-btn:hover .add-icon svg { stroke: var(--primary); }
+
+.bank-item-info { flex: 1; display: flex; flex-direction: column; gap: 0.2rem; }
+.bank-item-name { font-size: 0.95rem; font-weight: 600; color: var(--text-main); }
+.bank-item-account { font-size: 0.82rem; color: var(--text-muted); }
+.bank-item-owner { font-size: 0.85rem; color: var(--text-muted); font-weight: 500; }
+.bank-item-arrow { width: 16px; height: 16px; color: var(--text-muted); flex-shrink: 0; }
+
+/* ==========================================================================
+   10. CARD PANEL — 3-state (empty | list | detail)
+   ========================================================================== */
+.cp-panel {
+    display: none;
+    animation: fadeUpIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.cp-panel.cp-active { display: block; }
+
+/* Back button */
+.cp-back-btn {
+    display: none;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 0.9rem;
+    font-weight: 500;
+    font-family: inherit;
+    margin-bottom: 1.25rem;
+    padding: 0;
+    transition: var(--transition-fast);
+}
+
+.cp-back-btn svg { width: 16px; height: 16px; }
+.cp-back-btn:hover { opacity: 0.75; }
+.cp-back-btn.visible { display: flex; }
+
+/* Form title */
+.cp-form-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.01em;
+}
+
+/* Form actions row */
+.cp-form-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+    flex-wrap: wrap;
+}
+
+/* Delete confirm — inline strip */
+.cp-delete-confirm {
+    display: none;
+    align-items: center;
+    gap: 1.25rem;
+    background: rgba(255, 59, 48, 0.05);
+    border: 1.5px solid rgba(255, 59, 48, 0.2);
+    border-radius: 16px;
+    padding: 1.25rem 1.5rem;
+    margin-top: 1rem;
+    animation: fadeUpIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) both;
+    flex-wrap: wrap;
+}
+
+.cp-delete-confirm.visible { display: flex; }
+
+.cp-delete-icon {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 59, 48, 0.1);
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+}
+
+.cp-delete-icon svg { width: 18px; height: 18px; stroke: var(--danger); }
+
+.cp-delete-confirm p {
+    flex: 1;
+    font-size: 0.9rem;
+    color: var(--text-main);
+    font-weight: 500;
+    line-height: 1.5;
+    min-width: 160px;
+}
+
+.cp-delete-confirm p span {
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    font-weight: 400;
+}
+
+.cp-delete-actions {
+    display: flex;
+    gap: 0.6rem;
+    flex-shrink: 0;
+}
+
+.cp-delete-actions form { margin: 0; }
+
+/* Danger button */
+.btn-danger {
+    background-color: var(--danger) !important;
+    color: #fff !important;
+}
+
+.btn-danger:hover {
+    background-color: var(--danger-hover) !important;
+    box-shadow: 0 4px 15px rgba(255, 59, 48, 0.3) !important;
+    transform: translateY(-1px);
+}
+
+/* ==========================================================================
+   11. FOOTER
    ========================================================================== */
 .store-footer {
     padding: 2rem;

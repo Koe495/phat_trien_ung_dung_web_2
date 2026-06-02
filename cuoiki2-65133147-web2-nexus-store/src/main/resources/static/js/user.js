@@ -1,3 +1,125 @@
+/* ==========================================================
+   CARD PANEL — 3-state controller
+   States: 'empty'(create) | 'list' | 'detail'(edit)
+   ========================================================== */
+
+function cpShowState(type, state) {
+    // type: 'card' | 'bank'
+    const formPanel = document.getElementById(`cp-${type}-form`);
+    const listPanel = document.getElementById(`cp-${type}-list`);
+    const backBtn   = document.getElementById(`cp-${type}-back`);
+    const formTitle = document.getElementById(`cp-${type}-form-title`);
+    const deleteBtn = document.getElementById(`cp-${type}-delete-btn`);
+    const deleteConfirm = document.getElementById(`cp-${type}-delete-confirm`);
+
+    // Ẩn hết
+    [formPanel, listPanel].forEach(p => { if (p) p.classList.remove('cp-active'); });
+    if (deleteConfirm) deleteConfirm.classList.remove('visible');
+
+    if (state === 'list') {
+        if (listPanel) listPanel.classList.add('cp-active');
+        if (backBtn)   backBtn.classList.remove('visible');
+    } else {
+        // 'create' or 'detail'
+        if (formPanel) formPanel.classList.add('cp-active');
+        // Hiện nút "Quay lại" ở cả 'create' lẫn 'detail' — trừ khi không có list (empty state ban đầu)
+        const hasListPanel = listPanel && listPanel.querySelectorAll('.saved-card-item:not(.add-card-btn), .saved-bank-item:not(.add-bank-btn)').length > 0;
+        if (backBtn) backBtn.classList[hasListPanel ? 'add' : 'remove']('visible');
+        if (formTitle) formTitle.textContent = state === 'detail'
+            ? (type === 'card' ? 'Thông tin thẻ' : 'Thông tin ngân hàng')
+            : (type === 'card' ? 'Thêm thẻ mới' : 'Thêm tài khoản ngân hàng');
+        if (deleteBtn) deleteBtn.style.display = state === 'detail' ? 'inline-flex' : 'none';
+    }
+}
+
+/* Mở card detail — điền dữ liệu từ data-* */
+function cpOpenCard(el) {
+    const id      = el.getAttribute('data-id');
+    const holder  = el.getAttribute('data-holder');
+    const number  = el.getAttribute('data-number');
+    const expiry  = el.getAttribute('data-expiry');
+    const network = el.getAttribute('data-network') || '';
+
+    document.getElementById('cp-card-id').value             = id;
+    document.getElementById('cp-card-number').value         = number;
+    document.getElementById('cp-card-holder').value         = holder;
+    document.getElementById('cp-card-expiry').value         = expiry;
+    document.getElementById('cp-card-network-hidden').value = network;
+
+    // Cập nhật preview
+    document.getElementById('cp-card-number-display').textContent = number || '•••• •••• •••• ••••';
+    document.getElementById('cp-card-holder-display').textContent = (holder || 'TÊN CHỦ THẺ').toUpperCase();
+    document.getElementById('cp-card-expiry-display').textContent = expiry || 'MM/YY';
+    _cpApplyNetwork(document.getElementById('cp-card-network'), network);
+
+    cpShowState('card', 'detail');
+
+    // Trigger notch sau khi panel hiện
+    setTimeout(() => ['cp-card-number','cp-card-holder','cp-card-expiry'].forEach(fid => {
+        const inp = document.getElementById(fid);
+        if (inp) inp.dispatchEvent(new Event('input'));
+    }), 50);
+}
+
+/* Mở bank detail */
+function cpOpenBank(el) {
+    const id     = el.getAttribute('data-id');
+    const name   = el.getAttribute('data-name');
+    const acct   = el.getAttribute('data-account');
+    const owner  = el.getAttribute('data-owner');
+    const branch = el.getAttribute('data-branch') || '';
+
+    document.getElementById('cp-bank-id').value      = id;
+    document.getElementById('cp-bank-name').value    = name;
+    document.getElementById('cp-bank-account').value = acct;
+    document.getElementById('cp-bank-owner').value   = owner;
+    document.getElementById('cp-bank-branch').value  = branch;
+
+    cpShowState('bank', 'detail');
+
+    setTimeout(() => ['cp-bank-name','cp-bank-account','cp-bank-owner','cp-bank-branch'].forEach(fid => {
+        const inp = document.getElementById(fid);
+        if (inp) inp.dispatchEvent(new Event('input'));
+    }), 50);
+}
+
+/* Xác nhận xoá — hiện inline strip */
+function cpConfirmDelete(type) {
+    const deleteConfirm = document.getElementById(`cp-${type}-delete-confirm`);
+    const deleteIdInput = document.getElementById(`cp-${type}-delete-id`);
+    const currentId     = document.getElementById(`cp-${type}-id`).value;
+    if (deleteIdInput) deleteIdInput.value = currentId;
+    if (deleteConfirm) deleteConfirm.classList.add('visible');
+}
+
+function cpCancelDelete(type) {
+    const deleteConfirm = document.getElementById(`cp-${type}-delete-confirm`);
+    if (deleteConfirm) deleteConfirm.classList.remove('visible');
+}
+
+/* Helper: nhận diện mạng thẻ */
+function _cpDetectNetwork(val) {
+    if (/^4/.test(val))                              return 'VISA';
+    if (/^5[1-5]/.test(val) || /^2[2-7]/.test(val)) return 'Mastercard';
+    if (/^3[47]/.test(val))                          return 'AMEX';
+    if (/^9704/.test(val))                           return 'Napas';
+    return '';
+}
+
+/* Helper: áp dụng style mạng thẻ */
+function _cpApplyNetwork(el, network) {
+    if (!el) return;
+    el.className = 'card-network';
+    el.textContent = '';
+    if (network === 'VISA')        { el.classList.add('visa'); el.textContent = 'VISA'; }
+    else if (network === 'Mastercard') { el.classList.add('mc'); }
+    else if (network)              { el.textContent = network; }
+}
+
+/* ========================================================== */
+
+/* ========================================================== */
+
 document.addEventListener('DOMContentLoaded', () => {
 
     /* --- 1. Custom Trailing Hexagon Cursor --- */
@@ -179,24 +301,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Notch cho form thanh toán
-    adjustNotchWidth('cardNumber',  'label-cardNumber',  'notch-cardNumber');
-    adjustNotchWidth('cardHolder',  'label-cardHolder',  'notch-cardHolder');
-    adjustNotchWidth('cardExpiry',  'label-cardExpiry',  'notch-cardExpiry');
-    adjustNotchWidth('cardCvv',     'label-cardCvv',     'notch-cardCvv');
-    adjustNotchWidth('bankName',    'label-bankName',    'notch-bankName');
-    adjustNotchWidth('bankAccount', 'label-bankAccount', 'notch-bankAccount');
-    adjustNotchWidth('bankOwner',   'label-bankOwner',   'notch-bankOwner');
-    adjustNotchWidth('bankBranch',  'label-bankBranch',  'notch-bankBranch');
+    // Notch — card form (cp- ids)
+    adjustNotchWidth('cp-card-number', 'label-cp-card-number', 'notch-cp-card-number');
+    adjustNotchWidth('cp-card-holder', 'label-cp-card-holder', 'notch-cp-card-holder');
+    adjustNotchWidth('cp-card-expiry', 'label-cp-card-expiry', 'notch-cp-card-expiry');
+    adjustNotchWidth('cp-card-cvv',    'label-cp-card-cvv',    'notch-cp-card-cvv');
+
+    // Notch — bank form (cp- ids)
+    adjustNotchWidth('cp-bank-name',    'label-cp-bank-name',    'notch-cp-bank-name');
+    adjustNotchWidth('cp-bank-account', 'label-cp-bank-account', 'notch-cp-bank-account');
+    adjustNotchWidth('cp-bank-owner',   'label-cp-bank-owner',   'notch-cp-bank-owner');
+    adjustNotchWidth('cp-bank-branch',  'label-cp-bank-branch',  'notch-cp-bank-branch');
 
     /* --- 7. Live Card Preview --- */
-    const cardNumberInput   = document.getElementById('cardNumber');
-    const cardHolderInput   = document.getElementById('cardHolder');
-    const cardExpiryInput   = document.getElementById('cardExpiry');
-    const cardNumberDisplay = document.getElementById('cardNumberDisplay');
-    const cardHolderDisplay = document.getElementById('cardHolderDisplay');
-    const cardExpiryDisplay = document.getElementById('cardExpiryDisplay');
-    const cardNetwork       = document.getElementById('cardNetwork');
+    const cardNumberInput   = document.getElementById('cp-card-number');
+    const cardHolderInput   = document.getElementById('cp-card-holder');
+    const cardExpiryInput   = document.getElementById('cp-card-expiry');
+    const cardNumberDisplay = document.getElementById('cp-card-number-display');
+    const cardHolderDisplay = document.getElementById('cp-card-holder-display');
+    const cardExpiryDisplay = document.getElementById('cp-card-expiry-display');
+    const cardNetworkEl     = document.getElementById('cp-card-network');
+    const cardNetworkHidden = document.getElementById('cp-card-network-hidden');
 
     if (cardNumberInput) {
         cardNumberInput.addEventListener('input', function () {
@@ -207,19 +332,9 @@ document.addEventListener('DOMContentLoaded', () => {
             cardNumberDisplay.textContent =
                 raw.slice(0,4) + ' ' + raw.slice(4,8) + ' ' + raw.slice(8,12) + ' ' + raw.slice(12,16);
 
-            // Nhận diện mạng thẻ
-            cardNetwork.className = 'card-network';
-            cardNetwork.textContent = '';
-            if (/^4/.test(val)) {
-                cardNetwork.classList.add('visa');
-                cardNetwork.textContent = 'VISA';
-            } else if (/^5[1-5]/.test(val) || /^2[2-7]/.test(val)) {
-                cardNetwork.classList.add('mc');
-            } else if (/^3[47]/.test(val)) {
-                cardNetwork.textContent = 'AMEX';
-            } else if (/^9704/.test(val)) {
-                cardNetwork.textContent = 'Napas';
-            }
+            const net = _cpDetectNetwork(val);
+            _cpApplyNetwork(cardNetworkEl, net);
+            if (cardNetworkHidden) cardNetworkHidden.value = net;
         });
     }
 

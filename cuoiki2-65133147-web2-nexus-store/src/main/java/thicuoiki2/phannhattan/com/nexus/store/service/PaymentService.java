@@ -50,4 +50,20 @@ public class PaymentService {
     public List<PaymentBank> getBanksByUser(User user) {
         return bankRepository.findByUser(user);
     }
+
+    public void deleteCard(Integer id, User user) {
+        cardRepository.findById(id).ifPresent(card -> {
+            if (card.getUser().getId().equals(user.getId())) {
+                cardRepository.delete(card);
+            }
+        });
+    }
+
+    public void deleteBank(Integer id, User user) {
+        bankRepository.findById(id).ifPresent(bank -> {
+            if (bank.getUser().getId().equals(user.getId())) {
+                bankRepository.delete(bank);
+            }
+        });
+    }
 }

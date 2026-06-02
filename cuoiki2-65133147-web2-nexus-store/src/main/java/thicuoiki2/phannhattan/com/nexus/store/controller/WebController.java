@@ -147,4 +147,18 @@ public class WebController {
             return "user";
         }
     }
+
+    /* ------------------------------------------------------------------ */
+    /*  Xoá thông tin thanh toán                                           */
+    /* ------------------------------------------------------------------ */
+    @PostMapping("/user/delete-payment")
+    public String deletePayment(@RequestParam Integer id,
+                                @RequestParam String type,
+                                HttpSession session) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        if (loggedInUser == null) return "redirect:/login";
+        if ("card".equals(type))      paymentService.deleteCard(id, loggedInUser);
+        else if ("bank".equals(type)) paymentService.deleteBank(id, loggedInUser);
+        return "redirect:/user?tab=payment";
+    }
 }

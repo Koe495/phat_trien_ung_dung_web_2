@@ -290,7 +290,7 @@
             </div>
 
             <!-- ======================================================
-                 Pane 3: Thông tin thanh toán
+                 Pane 3: Thông tin thanh toán — 3-state inline panel
                  ====================================================== -->
             <div class="tab-pane" id="payment-pane">
                 <div class="pane-header">
@@ -298,169 +298,246 @@
                     <p class="pane-subtitle">Quản lý thẻ tín dụng và tài khoản ngân hàng để thanh toán nhanh hơn.</p>
                 </div>
 
-                <!-- Chọn loại thanh toán -->
+                <!-- Toggle credit / bank -->
                 <div class="payment-type-toggle">
                     <button class="payment-type-btn active" data-payment="credit">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
-                            <line x1="1" y1="10" x2="23" y2="10"></line>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
                         Thẻ tín dụng / Ghi nợ
                     </button>
                     <button class="payment-type-btn" data-payment="bank">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="1" x2="12" y2="23"></line>
-                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                         Tài khoản ngân hàng
                     </button>
                 </div>
 
-                <!-- === Form Thẻ tín dụng === -->
+                <!-- ============================================================
+                     CREDIT CARD PANEL — 3 states: empty | list | detail
+                     ============================================================ -->
                 <div class="payment-section active" id="credit-section">
 
-                    <!-- Preview thẻ -->
-                    <div class="card-preview" id="cardPreview">
-                        <div class="card-preview-top">
-                            <div class="card-chip">
-                                <svg viewBox="0 0 30 24" fill="none">
-                                    <rect width="30" height="24" rx="4" fill="#d4a843"/>
-                                    <rect x="10" y="0" width="10" height="24" fill="#c49a30" opacity="0.5"/>
-                                    <rect x="0" y="8" width="30" height="8" fill="#c49a30" opacity="0.5"/>
-                                    <rect x="10" y="8" width="10" height="8" fill="#b8891f" opacity="0.6"/>
-                                </svg>
+                    <!-- STATE 1 & 3: Create / Edit Form (dùng chung, ẩn/hiện qua JS) -->
+                    <div class="cp-panel" id="cp-card-form"
+                         th:classappend="${savedCards == null or savedCards.isEmpty()} ? 'cp-active' : ''">
+
+                        <!-- Breadcrumb back (chỉ hiện ở state Detail) -->
+                        <button type="button" class="cp-back-btn" id="cp-card-back" onclick="cpShowState('card','list')">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Quay lại danh sách
+                        </button>
+
+                        <div class="cp-form-title" id="cp-card-form-title">Thêm thẻ mới</div>
+
+                        <!-- Live card preview -->
+                        <div class="card-preview" id="cp-card-preview">
+                            <div class="card-preview-top">
+                                <div class="card-chip"><svg viewBox="0 0 30 24" fill="none"><rect width="30" height="24" rx="4" fill="#d4a843"/><rect x="10" y="0" width="10" height="24" fill="#c49a30" opacity="0.5"/><rect x="0" y="8" width="30" height="8" fill="#c49a30" opacity="0.5"/><rect x="10" y="8" width="10" height="8" fill="#b8891f" opacity="0.6"/></svg></div>
+                                <div class="card-network" id="cp-card-network"></div>
                             </div>
-                            <div class="card-network" id="cardNetwork">
-                                <!-- icon mạng thẻ hiện ra tự động -->
+                            <div class="card-number-display" id="cp-card-number-display">•••• •••• •••• ••••</div>
+                            <div class="card-preview-bottom">
+                                <div><div class="card-label-small">Chủ thẻ</div><div class="card-holder-display" id="cp-card-holder-display">TÊN CHỦ THẺ</div></div>
+                                <div><div class="card-label-small">Hết hạn</div><div class="card-expiry-display" id="cp-card-expiry-display">MM/YY</div></div>
                             </div>
                         </div>
-                        <div class="card-number-display" id="cardNumberDisplay">•••• •••• •••• ••••</div>
-                        <div class="card-preview-bottom">
-                            <div>
-                                <div class="card-label-small">Chủ thẻ</div>
-                                <div class="card-holder-display" id="cardHolderDisplay">TÊN CHỦ THẺ</div>
+
+                        <!-- Form -->
+                        <form id="cp-card-form-el" th:action="@{/user/save-card}" method="POST">
+                            <input type="hidden" id="cp-card-id" name="cardId">
+                            <input type="hidden" id="cp-card-network-hidden" name="cardNetwork">
+
+                            <div class="form-group">
+                                <input type="text" id="cp-card-number" name="cardNumber" class="form-input" placeholder=" " maxlength="19" autocomplete="cc-number" inputmode="numeric">
+                                <label for="cp-card-number" class="form-label" id="label-cp-card-number">Số thẻ</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-card-number"></div><div class="notched-outline-trailing"></div></div>
                             </div>
-                            <div>
-                                <div class="card-label-small">Hết hạn</div>
-                                <div class="card-expiry-display" id="cardExpiryDisplay">MM/YY</div>
+                            <div class="form-group">
+                                <input type="text" id="cp-card-holder" name="cardHolder" class="form-input" placeholder=" " autocomplete="cc-name">
+                                <label for="cp-card-holder" class="form-label" id="label-cp-card-holder">Tên chủ thẻ</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-card-holder"></div><div class="notched-outline-trailing"></div></div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="text" id="cp-card-expiry" name="cardExpiry" class="form-input" placeholder=" " maxlength="5" autocomplete="cc-exp" inputmode="numeric">
+                                    <label for="cp-card-expiry" class="form-label" id="label-cp-card-expiry">Ngày hết hạn (MM/YY)</label>
+                                    <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-card-expiry"></div><div class="notched-outline-trailing"></div></div>
+                                </div>
+                                <div class="form-group">
+                                    <input type="password" id="cp-card-cvv" name="cardCvv" class="form-input" placeholder=" " maxlength="4" autocomplete="cc-csc" inputmode="numeric" data-lpignore="true">
+                                    <label for="cp-card-cvv" class="form-label" id="label-cp-card-cvv">CVV</label>
+                                    <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-card-cvv"></div><div class="notched-outline-trailing"></div></div>
+                                </div>
+                            </div>
+
+                            <p class="security-note">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                NEXUS không lưu trữ số CVV. Dữ liệu được mã hoá chuẩn PCI DSS.
+                            </p>
+
+                            <div class="cp-form-actions">
+                                <button type="submit" class="btn-action btn-primary">Lưu thẻ</button>
+                                <button type="button" class="btn-action btn-danger cp-delete-btn" id="cp-card-delete-btn"
+                                        onclick="cpConfirmDelete('card')" style="display:none;">Xoá thẻ</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- STATE 2: Card List -->
+                    <div class="cp-panel" id="cp-card-list"
+                         th:classappend="${savedCards != null and !savedCards.isEmpty()} ? 'cp-active' : ''">
+
+                        <div class="saved-cards-grid">
+                            <!-- Thẻ đã lưu -->
+                            <div class="saved-card-item"
+                                 th:each="card : ${savedCards}"
+                                 th:data-id="${card.id}"
+                                 th:data-holder="${card.cardHolder}"
+                                 th:data-number="${card.cardNumber}"
+                                 th:data-expiry="${card.cardExpiry}"
+                                 th:data-network="${card.cardNetwork}"
+                                 onclick="cpOpenCard(this)">
+                                <div class="saved-card-inner">
+                                    <div class="saved-card-top">
+                                        <div class="saved-card-chip"><svg viewBox="0 0 30 24" fill="none"><rect width="30" height="24" rx="4" fill="#d4a843"/><rect x="10" y="0" width="10" height="24" fill="#c49a30" opacity="0.5"/><rect x="0" y="8" width="30" height="8" fill="#c49a30" opacity="0.5"/><rect x="10" y="8" width="10" height="8" fill="#b8891f" opacity="0.6"/></svg></div>
+                                        <span class="saved-card-network" th:text="${card.cardNetwork}"></span>
+                                    </div>
+                                    <div class="saved-card-number" th:text="${card.cardNumber}">•••• •••• •••• ••••</div>
+                                    <div class="saved-card-bottom">
+                                        <span class="saved-card-holder" th:text="${card.cardHolder}"></span>
+                                        <span class="saved-card-expiry" th:text="${card.cardExpiry}"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Thêm thẻ mới -->
+                            <div class="saved-card-item add-card-btn" onclick="cpShowState('card','create')">
+                                <div class="add-card-inner">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                    <span>Thêm thẻ mới</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- Form nhập thẻ -->
-                    <form id="creditForm" th:action="@{/user/save-card}" method="POST">
-
-                        <div class="form-group">
-                            <input type="text" id="cardNumber" name="cardNumber" class="form-input"
-                                   placeholder=" " maxlength="19" autocomplete="cc-number" inputmode="numeric">
-                            <label for="cardNumber" class="form-label" id="label-cardNumber">Số thẻ</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-cardNumber"></div>
-                                <div class="notched-outline-trailing"></div>
-                            </div>
+                    <!-- Delete confirm inline (dùng chung cho card) -->
+                    <div class="cp-delete-confirm" id="cp-card-delete-confirm">
+                        <div class="cp-delete-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
                         </div>
-
-                        <div class="form-group">
-                            <input type="text" id="cardHolder" name="cardHolder" class="form-input"
-                                   placeholder=" " autocomplete="cc-name">
-                            <label for="cardHolder" class="form-label" id="label-cardHolder">Tên chủ thẻ</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-cardHolder"></div>
-                                <div class="notched-outline-trailing"></div>
-                            </div>
+                        <p>Bạn có chắc muốn xoá thẻ này?<br><span>Hành động này không thể hoàn tác.</span></p>
+                        <div class="cp-delete-actions">
+                            <form th:action="@{/user/delete-payment}" method="POST">
+                                <input type="hidden" id="cp-card-delete-id" name="id">
+                                <input type="hidden" name="type" value="card">
+                                <button type="submit" class="btn-action btn-danger">Xoá</button>
+                            </form>
+                            <button type="button" class="btn-action" onclick="cpCancelDelete('card')">Huỷ</button>
                         </div>
-
-                        <div class="form-row">
-                            <div class="form-group">
-                                <input type="text" id="cardExpiry" name="cardExpiry" class="form-input"
-                                       placeholder=" " maxlength="5" autocomplete="cc-exp" inputmode="numeric">
-                                <label for="cardExpiry" class="form-label" id="label-cardExpiry">Ngày hết hạn (MM/YY)</label>
-                                <div class="notched-outline">
-                                    <div class="notched-outline-leading"></div>
-                                    <div class="notched-outline-notch" id="notch-cardExpiry"></div>
-                                    <div class="notched-outline-trailing"></div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <input type="password" id="cardCvv" name="cardCvv" class="form-input"
-                                       placeholder=" " maxlength="4" autocomplete="cc-csc" inputmode="numeric"
-                                       data-lpignore="true">
-                                <label for="cardCvv" class="form-label" id="label-cardCvv">CVV</label>
-                                <div class="notched-outline">
-                                    <div class="notched-outline-leading"></div>
-                                    <div class="notched-outline-notch" id="notch-cardCvv"></div>
-                                    <div class="notched-outline-trailing"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <p class="security-note">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            Thông tin thẻ được mã hoá theo chuẩn PCI DSS. NEXUS không lưu trữ số CVV.
-                        </p>
-
-                        <button type="submit" class="btn-action btn-primary">Lưu thẻ thanh toán</button>
-                    </form>
+                    </div>
                 </div>
 
-                <!-- === Form Ngân hàng === -->
+                <!-- ============================================================
+                     BANK PANEL — 3 states: empty | list | detail
+                     ============================================================ -->
                 <div class="payment-section" id="bank-section">
-                    <form id="bankForm" th:action="@{/user/save-bank}" method="POST">
 
-                        <div class="form-group">
-                            <input type="text" id="bankName" name="bankName" class="form-input" placeholder=" ">
-                            <label for="bankName" class="form-label" id="label-bankName">Tên ngân hàng</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-bankName"></div>
-                                <div class="notched-outline-trailing"></div>
+                    <!-- STATE 1 & 3: Create / Edit Form -->
+                    <div class="cp-panel" id="cp-bank-form"
+                         th:classappend="${savedBanks == null or savedBanks.isEmpty()} ? 'cp-active' : ''">
+
+                        <button type="button" class="cp-back-btn" id="cp-bank-back" onclick="cpShowState('bank','list')">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                            Quay lại danh sách
+                        </button>
+
+                        <div class="cp-form-title" id="cp-bank-form-title">Thêm tài khoản ngân hàng</div>
+
+                        <form id="cp-bank-form-el" th:action="@{/user/save-bank}" method="POST">
+                            <input type="hidden" id="cp-bank-id" name="bankId">
+
+                            <div class="form-group">
+                                <input type="text" id="cp-bank-name" name="bankName" class="form-input" placeholder=" ">
+                                <label for="cp-bank-name" class="form-label" id="label-cp-bank-name">Tên ngân hàng</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-bank-name"></div><div class="notched-outline-trailing"></div></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cp-bank-account" name="bankAccount" class="form-input" placeholder=" " inputmode="numeric">
+                                <label for="cp-bank-account" class="form-label" id="label-cp-bank-account">Số tài khoản</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-bank-account"></div><div class="notched-outline-trailing"></div></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cp-bank-owner" name="bankOwner" class="form-input" placeholder=" ">
+                                <label for="cp-bank-owner" class="form-label" id="label-cp-bank-owner">Chủ tài khoản</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-bank-owner"></div><div class="notched-outline-trailing"></div></div>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="cp-bank-branch" name="bankBranch" class="form-input" placeholder=" ">
+                                <label for="cp-bank-branch" class="form-label" id="label-cp-bank-branch">Chi nhánh (tuỳ chọn)</label>
+                                <div class="notched-outline"><div class="notched-outline-leading"></div><div class="notched-outline-notch" id="notch-cp-bank-branch"></div><div class="notched-outline-trailing"></div></div>
+                            </div>
+
+                            <p class="security-note">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                Thông tin ngân hàng chỉ dùng để xác minh và hoàn tiền. Dữ liệu được mã hoá toàn bộ.
+                            </p>
+
+                            <div class="cp-form-actions">
+                                <button type="submit" class="btn-action btn-primary">Lưu</button>
+                                <button type="button" class="btn-action btn-danger cp-delete-btn" id="cp-bank-delete-btn"
+                                        onclick="cpConfirmDelete('bank')" style="display:none;">Xoá</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- STATE 2: Bank List -->
+                    <div class="cp-panel" id="cp-bank-list"
+                         th:classappend="${savedBanks != null and !savedBanks.isEmpty()} ? 'cp-active' : ''">
+
+                        <div class="saved-banks-list">
+                            <div class="saved-bank-item"
+                                 th:each="bank : ${savedBanks}"
+                                 th:data-id="${bank.id}"
+                                 th:data-name="${bank.bankName}"
+                                 th:data-account="${bank.bankAccount}"
+                                 th:data-owner="${bank.bankOwner}"
+                                 th:data-branch="${bank.bankBranch}"
+                                 onclick="cpOpenBank(this)">
+                                <div class="bank-item-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                                </div>
+                                <div class="bank-item-info">
+                                    <span class="bank-item-name" th:text="${bank.bankName}"></span>
+                                    <span class="bank-item-account" th:text="${bank.bankAccount}"></span>
+                                </div>
+                                <div class="bank-item-owner" th:text="${bank.bankOwner}"></div>
+                                <svg class="bank-item-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                            </div>
+
+                            <div class="saved-bank-item add-bank-btn" onclick="cpShowState('bank','create')">
+                                <div class="bank-item-icon add-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                                </div>
+                                <div class="bank-item-info">
+                                    <span class="bank-item-name">Thêm tài khoản ngân hàng</span>
+                                </div>
                             </div>
                         </div>
+                    </div>
 
-                        <div class="form-group">
-                            <input type="text" id="bankAccount" name="bankAccount" class="form-input"
-                                   placeholder=" " inputmode="numeric">
-                            <label for="bankAccount" class="form-label" id="label-bankAccount">Số tài khoản</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-bankAccount"></div>
-                                <div class="notched-outline-trailing"></div>
-                            </div>
+                    <!-- Delete confirm inline bank -->
+                    <div class="cp-delete-confirm" id="cp-bank-delete-confirm">
+                        <div class="cp-delete-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path><path d="M10 11v6"></path><path d="M14 11v6"></path><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path></svg>
                         </div>
-
-                        <div class="form-group">
-                            <input type="text" id="bankOwner" name="bankOwner" class="form-input" placeholder=" ">
-                            <label for="bankOwner" class="form-label" id="label-bankOwner">Chủ tài khoản</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-bankOwner"></div>
-                                <div class="notched-outline-trailing"></div>
-                            </div>
+                        <p>Bạn có chắc muốn xoá tài khoản ngân hàng này?<br><span>Hành động này không thể hoàn tác.</span></p>
+                        <div class="cp-delete-actions">
+                            <form th:action="@{/user/delete-payment}" method="POST">
+                                <input type="hidden" id="cp-bank-delete-id" name="id">
+                                <input type="hidden" name="type" value="bank">
+                                <button type="submit" class="btn-action btn-danger">Xoá</button>
+                            </form>
+                            <button type="button" class="btn-action" onclick="cpCancelDelete('bank')">Huỷ</button>
                         </div>
-
-                        <div class="form-group">
-                            <input type="text" id="bankBranch" name="bankBranch" class="form-input" placeholder=" ">
-                            <label for="bankBranch" class="form-label" id="label-bankBranch">Chi nhánh (tuỳ chọn)</label>
-                            <div class="notched-outline">
-                                <div class="notched-outline-leading"></div>
-                                <div class="notched-outline-notch" id="notch-bankBranch"></div>
-                                <div class="notched-outline-trailing"></div>
-                            </div>
-                        </div>
-
-                        <p class="security-note">
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                            </svg>
-                            Thông tin ngân hàng chỉ dùng để xác minh và hoàn tiền. Dữ liệu được mã hoá toàn bộ.
-                        </p>
-
-                        <button type="submit" class="btn-action btn-primary">Lưu tài khoản ngân hàng</button>
-                    </form>
+                    </div>
                 </div>
 
             </div><!-- /.payment-pane -->
@@ -472,8 +549,8 @@
     <footer class="store-footer">
         <p>© 2026 NEXUS Global Store. Bản quyền thiết kế tối giản thuộc về hệ sinh thái di động NEXUS.</p>
     </footer>
-
+ 
     <script th:src="@{/js/user.js}"></script>
-
+ 
 </body>
 </html>
