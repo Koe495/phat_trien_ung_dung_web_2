@@ -393,6 +393,14 @@
             transform: translateY(-1px);
         }
 
+        .error-message {
+            color: #d93025;
+            font-size: 0.9rem;
+            margin-top: 0.25rem;
+            margin-bottom: 0.75rem;
+            display: none;
+        }
+
         /* --- Footer --- */
         .store-footer {
             padding: 2rem;

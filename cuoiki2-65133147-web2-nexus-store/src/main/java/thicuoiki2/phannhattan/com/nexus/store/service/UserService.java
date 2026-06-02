@@ -51,4 +51,40 @@ public class UserService {
 
         return user;
     }
+    
+    /**
+     * Cập nhật thông tin cá nhân (họ, tên, số điện thoại, email)
+     */
+    public User updateProfile(User updatedUser) throws Exception {
+        User existing = userRepository.findById(updatedUser.getId())
+                .orElseThrow(() -> new Exception("Không tìm thấy tài khoản!"));
+
+        // Kiểm tra email mới có trùng với tài khoản khác không
+        if (!existing.getEmail().equals(updatedUser.getEmail()) &&
+                userRepository.existsByEmail(updatedUser.getEmail())) {
+            throw new Exception("Email này đã được sử dụng bởi tài khoản khác!");
+        }
+
+        existing.setLastName(updatedUser.getLastName());
+        existing.setFirstName(updatedUser.getFirstName());
+        existing.setEmail(updatedUser.getEmail());
+        existing.setPhone(updatedUser.getPhone());
+
+        return userRepository.save(existing);
+    }
+
+    /**
+     * Đổi mật khẩu — yêu cầu xác nhận mật khẩu hiện tại
+     */
+    public void changePassword(Integer userId, String currentPassword, String newPassword) throws Exception {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new Exception("Không tìm thấy tài khoản!"));
+
+        if (!passwordEncoder.matches(currentPassword, user.getPasswordHash())) {
+            throw new Exception("Mật khẩu hiện tại không chính xác!");
+        }
+
+        user.setPasswordHash(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+    }
 }

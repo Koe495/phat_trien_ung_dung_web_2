@@ -210,6 +210,21 @@
         }
         .icon-btn:hover { background: rgba(0,0,0,0.05); opacity: 1; }
         .icon-btn svg { width: 18px; height: 18px; stroke-width: 1.5; }
+        
+        .user-avatar-btn {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: var(--primary);
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-transform: uppercase;
+}
 
         /* Search Bar Styles */
         .search-wrapper {

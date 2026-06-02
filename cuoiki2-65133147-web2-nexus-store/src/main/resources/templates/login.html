@@ -32,49 +32,48 @@
                 <p class="card-subtitle">Chưa có tài khoản Nexus ID? <a th:href="@{register}">Tạo ngay của bạn</a></p>
             </div>
 
-            <form id="loginForm" onsubmit="event.preventDefault();" autocomplete="on">
+            <form id="loginForm" th:action="@{/login}" method="POST" autocomplete="on">
                 
-                <!-- Email Group with Notched Outline -->
-                <div class="form-group">
-                    <input type="email" id="email" class="form-input" placeholder=" " required autocomplete="username">
-                    <label for="email" class="form-label" id="label-email">Email hoặc Số điện thoại</label>
-                    <div class="notched-outline">
-                        <div class="notched-outline-leading"></div>
-                        <div class="notched-outline-notch" id="notch-email"></div>
-                        <div class="notched-outline-trailing"></div>
-                    </div>
-                </div>
+    <div th:if="${errorMsg != null}" style="color: #ff3b30; font-size: 14px; margin-bottom: 20px; text-align: center; padding: 10px; border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 8px; background-color: rgba(255, 59, 48, 0.05);" th:text="${errorMsg}"></div>
+    
+    <div th:if="${successMsg != null}" style="color: #34c759; font-size: 14px; margin-bottom: 20px; text-align: center; padding: 10px; border: 1px solid rgba(52, 199, 89, 0.3); border-radius: 8px; background-color: rgba(52, 199, 89, 0.05);" th:text="${successMsg}"></div>
 
-                <!-- Password Group with Notched Outline -->
-                <div class="form-group">
-                    <!-- Thuộc tính data-bypass & lpignore để báo hiệu các tiện ích quản lý mật khẩu không tự vẽ đè icon -->
-                    <input type="password" id="password" class="form-input" placeholder=" " required autocomplete="current-password" data-lpignore="true" data-bypass="true" data-dashlane-ignore="true">
-                    <label for="password" class="form-label" id="label-password">Mật khẩu</label>
-                    
-                    <button type="button" class="toggle-password" id="togglePasswordBtn" aria-label="Hiện mật khẩu">
-                        <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    </button>
+    <div class="form-group">
+        <input type="email" id="email" name="email" class="form-input" placeholder=" " required autocomplete="username">
+        <label for="email" class="form-label" id="label-email">Email hoặc Số điện thoại</label>
+        <div class="notched-outline">
+            <div class="notched-outline-leading"></div>
+            <div class="notched-outline-notch" id="notch-email"></div>
+            <div class="notched-outline-trailing"></div>
+        </div>
+    </div>
 
-                    <div class="notched-outline">
-                        <div class="notched-outline-leading"></div>
-                        <div class="notched-outline-notch" id="notch-password"></div>
-                        <div class="notched-outline-trailing"></div>
-                    </div>
-                </div>
+    <div class="form-group">
+        <input type="password" id="password" name="password" class="form-input" placeholder=" " required autocomplete="current-password" data-lpignore="true" data-bypass="true" data-dashlane-ignore="true">
+        <label for="password" class="form-label" id="label-password">Mật khẩu</label>
+        
+        <button type="button" class="toggle-password" id="togglePasswordBtn" aria-label="Hiện mật khẩu">
+            <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+        </button>
 
-                <!-- Options -->
-                <div class="form-options">
-                    <label class="remember-me">
-                        <input type="checkbox" id="remember">
-                        Duy trì đăng nhập
-                    </label>
-                    <a th:href="@{#}" class="forgot-password">Quên mật khẩu?</a>
-                </div>
+        <div class="notched-outline">
+            <div class="notched-outline-leading"></div>
+            <div class="notched-outline-notch" id="notch-password"></div>
+            <div class="notched-outline-trailing"></div>
+        </div>
+    </div>
 
-                <!-- Submit Button -->
-                <button type="submit" class="submit-btn" id="submitBtn">Tiếp tục</button>
+    <div class="form-options">
+        <label class="remember-me">
+            <input type="checkbox" id="remember" name="remember">
+            Duy trì đăng nhập
+        </label>
+        <a th:href="@{#}" class="forgot-password">Quên mật khẩu?</a>
+    </div>
 
-            </form>
+    <button type="submit" class="submit-btn" id="submitBtn">Tiếp tục</button>
+
+</form>
 
             <div class="divider">Hoặc</div>
 
