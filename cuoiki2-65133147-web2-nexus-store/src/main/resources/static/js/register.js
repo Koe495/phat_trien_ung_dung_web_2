@@ -132,17 +132,16 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    registerForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (passwordInput.value !== confirmInput.value) {
-            pwError.textContent = 'Mật khẩu không khớp.';
-            pwError.style.display = 'block';
-            confirmInput.focus();
-            return;
-        }
-        pwError.style.display = 'none';
-        // TODO: replace with real submit logic
-        alert('Tạo tài khoản thành công (demo).');
-    });
+	registerForm.addEventListener('submit', (e) => {
+	    if (passwordInput.value !== confirmInput.value) {
+	        e.preventDefault();
+	        pwError.textContent = 'Mật khẩu không khớp.';
+	        pwError.style.display = 'block';
+	        confirmInput.focus();
+	        return;
+	    }
+	    pwError.style.display = 'none';
+	    // Để form tự submit lên th:action="/register"
+	});
 
 });

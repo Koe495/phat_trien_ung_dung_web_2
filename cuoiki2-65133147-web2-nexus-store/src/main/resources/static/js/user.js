@@ -165,4 +165,77 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    /* --- 6. Payment Tab Toggle --- */
+    const paymentTypeBtns = document.querySelectorAll('.payment-type-btn');
+    const paymentSections = document.querySelectorAll('.payment-section');
+
+    paymentTypeBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            paymentTypeBtns.forEach(b => b.classList.remove('active'));
+            paymentSections.forEach(s => s.classList.remove('active'));
+            this.classList.add('active');
+            const target = document.getElementById(this.getAttribute('data-payment') + '-section');
+            if (target) target.classList.add('active');
+        });
+    });
+
+    // Notch cho form thanh toán
+    adjustNotchWidth('cardNumber',  'label-cardNumber',  'notch-cardNumber');
+    adjustNotchWidth('cardHolder',  'label-cardHolder',  'notch-cardHolder');
+    adjustNotchWidth('cardExpiry',  'label-cardExpiry',  'notch-cardExpiry');
+    adjustNotchWidth('cardCvv',     'label-cardCvv',     'notch-cardCvv');
+    adjustNotchWidth('bankName',    'label-bankName',    'notch-bankName');
+    adjustNotchWidth('bankAccount', 'label-bankAccount', 'notch-bankAccount');
+    adjustNotchWidth('bankOwner',   'label-bankOwner',   'notch-bankOwner');
+    adjustNotchWidth('bankBranch',  'label-bankBranch',  'notch-bankBranch');
+
+    /* --- 7. Live Card Preview --- */
+    const cardNumberInput   = document.getElementById('cardNumber');
+    const cardHolderInput   = document.getElementById('cardHolder');
+    const cardExpiryInput   = document.getElementById('cardExpiry');
+    const cardNumberDisplay = document.getElementById('cardNumberDisplay');
+    const cardHolderDisplay = document.getElementById('cardHolderDisplay');
+    const cardExpiryDisplay = document.getElementById('cardExpiryDisplay');
+    const cardNetwork       = document.getElementById('cardNetwork');
+
+    if (cardNumberInput) {
+        cardNumberInput.addEventListener('input', function () {
+            let val = this.value.replace(/\D/g, '').slice(0, 16);
+            this.value = val.replace(/(.{4})/g, '$1 ').trim();
+
+            const raw = val.padEnd(16, '•');
+            cardNumberDisplay.textContent =
+                raw.slice(0,4) + ' ' + raw.slice(4,8) + ' ' + raw.slice(8,12) + ' ' + raw.slice(12,16);
+
+            // Nhận diện mạng thẻ
+            cardNetwork.className = 'card-network';
+            cardNetwork.textContent = '';
+            if (/^4/.test(val)) {
+                cardNetwork.classList.add('visa');
+                cardNetwork.textContent = 'VISA';
+            } else if (/^5[1-5]/.test(val) || /^2[2-7]/.test(val)) {
+                cardNetwork.classList.add('mc');
+            } else if (/^3[47]/.test(val)) {
+                cardNetwork.textContent = 'AMEX';
+            } else if (/^9704/.test(val)) {
+                cardNetwork.textContent = 'Napas';
+            }
+        });
+    }
+
+    if (cardHolderInput) {
+        cardHolderInput.addEventListener('input', function () {
+            cardHolderDisplay.textContent = this.value.toUpperCase() || 'TÊN CHỦ THẺ';
+        });
+    }
+
+    if (cardExpiryInput) {
+        cardExpiryInput.addEventListener('input', function () {
+            let val = this.value.replace(/\D/g, '').slice(0, 4);
+            if (val.length >= 3) val = val.slice(0,2) + '/' + val.slice(2);
+            this.value = val;
+            cardExpiryDisplay.textContent = val || 'MM/YY';
+        });
+    }
+
 });

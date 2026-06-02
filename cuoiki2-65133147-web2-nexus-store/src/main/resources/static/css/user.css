@@ -504,7 +504,193 @@ body {
 }
 
 /* ==========================================================================
-   7. FOOTER
+   7. PAYMENT SECTION
+   ========================================================================== */
+
+/* Toggle giữa thẻ / ngân hàng */
+.payment-type-toggle {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 2rem;
+    background: var(--bg-base);
+    padding: 6px;
+    border-radius: 16px;
+}
+
+.payment-type-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.6rem;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 12px;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    font-weight: 500;
+    font-family: inherit;
+    transition: var(--transition-smooth);
+}
+
+.payment-type-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+
+.payment-type-btn.active {
+    background: var(--bg-surface);
+    color: var(--text-main);
+    font-weight: 600;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+/* Ẩn/hiện section */
+.payment-section { display: none; }
+.payment-section.active { display: block; }
+
+/* ---- Card Preview ---- */
+.card-preview {
+    width: 100%;
+    max-width: 380px;
+    aspect-ratio: 1.586 / 1;
+    border-radius: 20px;
+    background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+    padding: 1.75rem;
+    color: #fff;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 20px 50px rgba(15, 12, 41, 0.4);
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-smooth);
+}
+
+/* Hiệu ứng bóng sáng góc */
+.card-preview::before {
+    content: '';
+    position: absolute;
+    top: -60px; right: -60px;
+    width: 220px; height: 220px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+}
+
+.card-preview::after {
+    content: '';
+    position: absolute;
+    bottom: -80px; left: -40px;
+    width: 260px; height: 260px;
+    border-radius: 50%;
+    background: rgba(0, 113, 227, 0.12);
+}
+
+.card-preview-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    z-index: 1;
+}
+
+.card-chip svg {
+    width: 40px;
+    height: 32px;
+    border-radius: 4px;
+    display: block;
+}
+
+.card-network {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+}
+
+.card-network.visa    { font-size: 1.5rem; font-style: italic; color: #fff; letter-spacing: 0; }
+.card-network.mc      { display: flex; }
+.card-network.mc::before,
+.card-network.mc::after {
+    content: '';
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: block;
+}
+.card-network.mc::before { background: #eb001b; }
+.card-network.mc::after  { background: #f79e1b; margin-left: -10px; opacity: 0.85; }
+
+.card-number-display {
+    font-size: 1.35rem;
+    letter-spacing: 0.2em;
+    font-weight: 600;
+    color: #fff;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+    font-variant-numeric: tabular-nums;
+}
+
+.card-preview-bottom {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    position: relative;
+    z-index: 1;
+}
+
+.card-label-small {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 0.2rem;
+}
+
+.card-holder-display {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.card-expiry-display {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #fff;
+    letter-spacing: 0.06em;
+}
+
+/* ---- Security note ---- */
+.security-note {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.82rem;
+    color: var(--text-muted);
+    background: rgba(0, 113, 227, 0.05);
+    border: 1px solid rgba(0, 113, 227, 0.12);
+    border-radius: 12px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+}
+
+.security-note svg {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+    margin-top: 1px;
+    color: var(--primary);
+}
+
+/* ==========================================================================
+   8. FOOTER
    ========================================================================== */
 .store-footer {
     padding: 2rem;
