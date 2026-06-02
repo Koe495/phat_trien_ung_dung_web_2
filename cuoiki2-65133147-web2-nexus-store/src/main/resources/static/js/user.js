@@ -354,3 +354,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
 });
+
+const toastSuccess = document.getElementById('toastSuccess');
+const toastError = document.getElementById('toastError');
+
+[toastSuccess, toastError].forEach(toast => {
+    if (!toast) return;
+
+    setTimeout(() => {
+        toast.remove();
+    }, 4000);
+});

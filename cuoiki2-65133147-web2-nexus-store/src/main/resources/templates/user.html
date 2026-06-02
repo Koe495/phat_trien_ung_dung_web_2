@@ -7,6 +7,19 @@
     <link rel="stylesheet" th:href="@{/css/user.css}">
 </head>
 <body>
+	
+	<!-- Thông báo -->
+<div th:if="${successMsg != null}"
+     id="toastSuccess"
+     class="toast toast-success">
+    <span th:text="${successMsg}"></span>
+</div>
+
+<div th:if="${errorMsg != null}"
+     id="toastError"
+     class="toast toast-error">
+    <span th:text="${errorMsg}"></span>
+</div>
 
     <!-- Custom Cursor -->
     <div class="custom-cursor" id="customCursor">
@@ -99,20 +112,6 @@
 
         <!-- Content Area -->
         <div class="account-content">
-
-            <!-- Thông báo thành công (nếu có) -->
-            <div th:if="${successMsg != null}"
-                 style="color: #34c759; font-size: 14px; margin-bottom: 20px; text-align: center;
-                        padding: 10px; border: 1px solid #34c759; border-radius: 8px;"
-                 th:text="${successMsg}">
-            </div>
-
-            <!-- Thông báo lỗi (nếu có) -->
-            <div th:if="${errorMsg != null}"
-                 style="color: #ff3b30; font-size: 14px; margin-bottom: 20px; text-align: center;
-                        padding: 10px; border: 1px solid #ff3b30; border-radius: 8px;"
-                 th:text="${errorMsg}">
-            </div>
 
             <!-- ======================================================
                  Pane 1: Hồ sơ cá nhân

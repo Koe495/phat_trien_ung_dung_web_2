@@ -19,27 +19,83 @@ public class PaymentService {
     @Autowired
     private PaymentBankRepository bankRepository;
 
-    public PaymentCard saveCard(User user, String cardHolder, String cardNumber,
-                                String cardExpiry, String cardNetwork) {
-        PaymentCard card = new PaymentCard();
-        card.setUser(user);
+    public PaymentCard saveCard(
+            Integer cardId,
+            User user,
+            String cardHolder,
+            String cardNumber,
+            String cardExpiry,
+            String cardNetwork) {
+
+        PaymentCard card;
+
+        // Update
+        if (cardId != null) {
+
+            card = cardRepository.findById(cardId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Không tìm thấy thẻ"));
+
+            if (!card.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException("Bạn không có quyền sửa thẻ này");
+            }
+
+        }
+        // Insert
+        else {
+            card = new PaymentCard();
+            card.setUser(user);
+        }
+
         card.setCardHolder(cardHolder);
-        // Chỉ lưu 4 số cuối để bảo mật
+
         String cleaned = cardNumber.replaceAll("\\s", "");
-        card.setCardNumber("**** **** **** " + cleaned.substring(Math.max(0, cleaned.length() - 4)));
+
+        card.setCardNumber(
+                "**** **** **** " +
+                cleaned.substring(Math.max(0, cleaned.length() - 4))
+        );
+
         card.setCardExpiry(cardExpiry);
         card.setCardNetwork(cardNetwork);
+
         return cardRepository.save(card);
     }
 
-    public PaymentBank saveBank(User user, String bankName, String bankAccount,
-                                String bankOwner, String bankBranch) {
-        PaymentBank bank = new PaymentBank();
-        bank.setUser(user);
+    public PaymentBank saveBank(
+            Integer bankId,
+            User user,
+            String bankName,
+            String bankAccount,
+            String bankOwner,
+            String bankBranch) {
+
+        PaymentBank bank;
+
+        // Update
+        if (bankId != null) {
+
+            bank = bankRepository.findById(bankId)
+                    .orElseThrow(() ->
+                            new RuntimeException("Không tìm thấy tài khoản ngân hàng"));
+
+            if (!bank.getUser().getId().equals(user.getId())) {
+                throw new RuntimeException(
+                        "Bạn không có quyền sửa tài khoản này");
+            }
+        }
+        // Insert
+        else {
+
+            bank = new PaymentBank();
+            bank.setUser(user);
+        }
+
         bank.setBankName(bankName);
         bank.setBankAccount(bankAccount);
         bank.setBankOwner(bankOwner);
         bank.setBankBranch(bankBranch);
+
         return bankRepository.save(bank);
     }
 

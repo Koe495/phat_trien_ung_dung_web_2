@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import thicuoiki2.phannhattan.com.nexus.store.entity.Product;
 import thicuoiki2.phannhattan.com.nexus.store.entity.User;
 import thicuoiki2.phannhattan.com.nexus.store.repository.ProductRepository;
@@ -145,16 +147,30 @@ public class WebController {
     /* ------------------------------------------------------------------ */
     @PostMapping("/user/update-profile")
     public String updateProfile(@ModelAttribute User updatedUser,
-                                HttpSession session, Model model) {
+                                HttpSession session,
+                                Model model,
+                                RedirectAttributes redirectAttributes) {
         try {
             User saved = userService.updateProfile(updatedUser);
+
             session.setAttribute("loggedInUser", saved);
-            return "redirect:/user?success=profile";
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    "Cập nhật thông tin thành công!"
+            );
+
+            return "redirect:/user";
+
         } catch (Exception e) {
+
             User loggedInUser = (User) session.getAttribute("loggedInUser");
+
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+
             addCartCount(loggedInUser, model);
+
             return "user";
         }
     }
@@ -163,21 +179,42 @@ public class WebController {
     /*  Đổi mật khẩu                                                        */
     /* ------------------------------------------------------------------ */
     @PostMapping("/user/change-password")
-    public String changePassword(@RequestParam String currentPassword,
-                                 @RequestParam String newPassword,
-                                 @RequestParam String confirmPassword,
-                                 HttpSession session, Model model) {
+    public String changePassword(
+            @RequestParam String currentPassword,
+            @RequestParam String newPassword,
+            @RequestParam String confirmPassword,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
         User loggedInUser = (User) session.getAttribute("loggedInUser");
+
         try {
+
             if (!newPassword.equals(confirmPassword)) {
                 throw new Exception("Mật khẩu xác nhận không khớp!");
             }
-            userService.changePassword(loggedInUser.getId(), currentPassword, newPassword);
-            return "redirect:/user?success=password";
+
+            userService.changePassword(
+                    loggedInUser.getId(),
+                    currentPassword,
+                    newPassword
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    "Đổi mật khẩu thành công!"
+            );
+
+            return "redirect:/user";
+
         } catch (Exception e) {
+
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+
             addCartCount(loggedInUser, model);
+
             return "user";
         }
     }
@@ -186,57 +223,135 @@ public class WebController {
     /*  Lưu thẻ thanh toán                                                  */
     /* ------------------------------------------------------------------ */
     @PostMapping("/user/save-card")
-    public String saveCard(@RequestParam String cardHolder,
-                           @RequestParam String cardNumber,
-                           @RequestParam String cardExpiry,
-                           @RequestParam(required = false, defaultValue = "") String cardNetwork,
-                           HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) return "redirect:/login";
+    public String saveCard(
+            @RequestParam(required = false) Integer cardId,
+            @RequestParam String cardHolder,
+            @RequestParam String cardNumber,
+            @RequestParam String cardExpiry,
+            @RequestParam(required = false, defaultValue = "") String cardNetwork,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        User loggedInUser =
+                (User) session.getAttribute("loggedInUser");
+
+        if (loggedInUser == null)
+            return "redirect:/login";
+
         try {
-            paymentService.saveCard(loggedInUser, cardHolder, cardNumber, cardExpiry, cardNetwork);
-            return "redirect:/user?success=card&tab=payment";
+
+            paymentService.saveCard(
+                    cardId,
+                    loggedInUser,
+                    cardHolder,
+                    cardNumber,
+                    cardExpiry,
+                    cardNetwork
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    cardId == null
+                            ? "Đã thêm thẻ thanh toán."
+                            : "Đã cập nhật thẻ thanh toán."
+            );
+
+            return "redirect:/user?tab=payment";
+
         } catch (Exception e) {
+
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+
             addCartCount(loggedInUser, model);
+
             return "user";
         }
     }
-
     /* ------------------------------------------------------------------ */
     /*  Lưu tài khoản ngân hàng                                             */
     /* ------------------------------------------------------------------ */
     @PostMapping("/user/save-bank")
-    public String saveBank(@RequestParam String bankName,
-                           @RequestParam String bankAccount,
-                           @RequestParam String bankOwner,
-                           @RequestParam(required = false, defaultValue = "") String bankBranch,
-                           HttpSession session, Model model) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) return "redirect:/login";
+    public String saveBank(
+            @RequestParam(required = false) Integer bankId,
+            @RequestParam String bankName,
+            @RequestParam String bankAccount,
+            @RequestParam String bankOwner,
+            @RequestParam(required = false, defaultValue = "") String bankBranch,
+            HttpSession session,
+            Model model,
+            RedirectAttributes redirectAttributes) {
+
+        User loggedInUser =
+                (User) session.getAttribute("loggedInUser");
+
+        if (loggedInUser == null)
+            return "redirect:/login";
+
         try {
-            paymentService.saveBank(loggedInUser, bankName, bankAccount, bankOwner, bankBranch);
-            return "redirect:/user?success=bank&tab=payment";
+
+            paymentService.saveBank(
+                    bankId,
+                    loggedInUser,
+                    bankName,
+                    bankAccount,
+                    bankOwner,
+                    bankBranch
+            );
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    bankId == null
+                            ? "Đã thêm tài khoản ngân hàng."
+                            : "Đã cập nhật tài khoản ngân hàng."
+            );
+
+            return "redirect:/user?tab=payment";
+
         } catch (Exception e) {
+
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+
             addCartCount(loggedInUser, model);
+
             return "user";
         }
     }
-
     /* ------------------------------------------------------------------ */
     /*  Xoá thông tin thanh toán                                           */
     /* ------------------------------------------------------------------ */
     @PostMapping("/user/delete-payment")
-    public String deletePayment(@RequestParam Integer id,
-                                @RequestParam String type,
-                                HttpSession session) {
-        User loggedInUser = (User) session.getAttribute("loggedInUser");
-        if (loggedInUser == null) return "redirect:/login";
-        if ("card".equals(type))      paymentService.deleteCard(id, loggedInUser);
-        else if ("bank".equals(type)) paymentService.deleteBank(id, loggedInUser);
+    public String deletePayment(
+            @RequestParam Integer id,
+            @RequestParam String type,
+            HttpSession session,
+            RedirectAttributes redirectAttributes) {
+
+        User loggedInUser =
+                (User) session.getAttribute("loggedInUser");
+
+        if (loggedInUser == null)
+            return "redirect:/login";
+
+        if ("card".equals(type)) {
+            paymentService.deleteCard(id, loggedInUser);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    "Đã xóa thẻ thanh toán."
+            );
+        }
+        else if ("bank".equals(type)) {
+            paymentService.deleteBank(id, loggedInUser);
+
+            redirectAttributes.addFlashAttribute(
+                    "successMsg",
+                    "Đã xóa tài khoản ngân hàng."
+            );
+        }
+
         return "redirect:/user?tab=payment";
     }
 }
