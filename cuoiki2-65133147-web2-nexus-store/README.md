@@ -117,18 +117,19 @@ Presentation (Thymeleaf templates)
 Spring Security (session filter)
     ↓
 Controllers
-  ├── HomeController
-  ├── ProductController
-  ├── CartController
-  ├── AuthController
-  └── AdminController
+  ├── WebController          — trang chủ, điều hướng chung
+  ├── ShopController         — danh sách & chi tiết sản phẩm, tìm kiếm
+  ├── AuthController         — đăng ký / đăng nhập / đăng xuất
+  ├── AdminController        — toàn bộ trang quản trị
+  └── SupportChatController  — API chatbot AI (/api/support/chat)
     ↓
 Services
   ├── OrderService      — tạo đơn hàng, gọi EmailService
   ├── CartService
   ├── UserService
-  ├── PaymentService
-  └── EmailService      — gửi email async (Gmail SMTP)
+  ├── PaymentService    — quản lý PaymentBank & PaymentCard
+  ├── EmailService      — gửi email async (Gmail SMTP)
+  └── AiChatService     — gọi Groq API, quản lý lịch sử hội thoại
     ↓
 Repositories (Spring Data JPA)
     ↓
@@ -315,6 +316,80 @@ Hoặc sửa trực tiếp `groq.api.key` trong `application.properties`. Đổi
 - Đổi `spring.jpa.hibernate.ddl-auto` sang `validate` cho môi trường production.
 - Bật CSRF, HTTPS, và kiểm tra session fixation trước khi deploy thật.
 - Không commit `GROQ_API_KEY` lên Git — dùng biến môi trường.
+
+---
+
+## 16. Mô hình dữ liệu (Entity)
+
+| Entity | Bảng DB | Mô tả |
+|---|---|---|
+| `User` | `users` | Tài khoản người dùng (role: `admin` / `customer`) |
+| `Product` | `products` | Sản phẩm, liên kết với `Category` |
+| `ProductColor` | `product_colors` | Màu sắc theo sản phẩm |
+| `Category` | `categories` | Danh mục sản phẩm |
+| `CartItem` | `cart_items` | Sản phẩm trong giỏ hàng (liên kết `User`, `Product`, `ProductColor`) |
+| `Order` | `orders` | Đơn hàng — lưu tổng tiền, địa chỉ, trạng thái, email giao hàng |
+| `OrderItem` | `order_items` | Chi tiết từng sản phẩm trong đơn hàng |
+| `PaymentBank` | `payment_banks` | Tài khoản ngân hàng liên kết với `User` (bankName, bankAccount, bankOwner, bankBranch) |
+| `PaymentCard` | `payment_cards` | Thẻ thanh toán liên kết với `User` (cardHolder, cardNumber, cardExpiry, cardNetwork) |
+
+> File `nexusdb.sql` (trong repo) chứa schema đầy đủ và dữ liệu mẫu.
+
+---
+
+## 17. Biến môi trường
+
+| Biến | Bắt buộc | Ý nghĩa |
+|---|---|---|
+| `GROQ_API_KEY` | Không (chatbot fallback nếu thiếu) | API key Groq Llama |
+| `spring.datasource.password` | Có | Mật khẩu MySQL |
+| `spring.mail.username` | Có (nếu dùng email) | Gmail dùng để gửi |
+| `spring.mail.password` | Có (nếu dùng email) | Gmail App Password |
+
+Có thể đặt trong `application.properties` hoặc qua biến môi trường hệ điều hành (khuyến nghị cho production).
+
+---
+
+## 18. H2 Console (Dev)
+
+H2 in-memory console có thể truy cập tại:
+
+```
+http://localhost:8080/h2-console
+```
+
+Khi dùng H2 (không phải MySQL), chỉnh `application.properties`:
+```properties
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driver-class-name=org.h2.Driver
+spring.h2.console.enabled=true
+```
+
+---
+
+## 19. Testing
+
+Dự án có sẵn lớp test Spring Boot mặc định:
+
+```
+src/test/java/.../Cuoiki265133147Web2NexusStoreApplicationTests.java
+```
+
+Chạy tất cả test:
+```bash
+./mvnw test
+```
+
+Bỏ qua test khi build:
+```bash
+./mvnw -DskipTests package
+```
+
+---
+
+## 20. License
+
+Dự án phục vụ mục đích học tập — môn **Phát triển Ứng dụng Web 2**, Trường Đại học Nha Trang.
 
 ---
 
