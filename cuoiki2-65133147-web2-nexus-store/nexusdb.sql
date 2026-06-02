@@ -35,7 +35,7 @@ CREATE TABLE `cart_items` (
   CONSTRAINT `fk_cart_colors` FOREIGN KEY (`color_id`) REFERENCES `product_colors` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_cart_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_cart_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=21 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=25 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +44,7 @@ CREATE TABLE `cart_items` (
 
 LOCK TABLES `cart_items` WRITE;
 /*!40000 ALTER TABLE `cart_items` DISABLE KEYS */;
+INSERT INTO `cart_items` VALUES (24,2,1,3,1);
 /*!40000 ALTER TABLE `cart_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -125,7 +126,7 @@ CREATE TABLE `order_items` (
   CONSTRAINT `fk_items_colors` FOREIGN KEY (`color_id`) REFERENCES `product_colors` (`id`) ON DELETE SET NULL,
   CONSTRAINT `fk_items_orders` FOREIGN KEY (`order_id`) REFERENCES `orders` (`id`) ON DELETE CASCADE,
   CONSTRAINT `fk_items_products` FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -134,7 +135,7 @@ CREATE TABLE `order_items` (
 
 LOCK TABLES `order_items` WRITE;
 /*!40000 ALTER TABLE `order_items` DISABLE KEYS */;
-INSERT INTO `order_items` VALUES (1,1,2,NULL,1,34990000),(2,1,1,3,2,22990000),(3,2,1,1,1,22990000),(4,3,1,2,1,22990000),(5,4,2,NULL,1,34990000),(6,4,1,1,2,22990000),(7,5,2,NULL,1,34990000),(8,6,2,NULL,1,34990000);
+INSERT INTO `order_items` VALUES (1,1,2,NULL,1,34990000),(2,1,1,3,2,22990000),(3,2,1,1,1,22990000),(4,3,1,2,1,22990000),(5,4,2,NULL,1,34990000),(6,4,1,1,2,22990000),(7,5,2,NULL,1,34990000),(8,6,2,NULL,1,34990000),(9,7,12,NULL,1,6990000),(10,8,24,NULL,1,2190000),(11,8,1,2,1,22990000);
 /*!40000 ALTER TABLE `order_items` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -159,7 +160,7 @@ CREATE TABLE `orders` (
   PRIMARY KEY (`id`),
   KEY `fk_orders_users` (`user_id`),
   CONSTRAINT `fk_orders_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE RESTRICT
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -168,7 +169,7 @@ CREATE TABLE `orders` (
 
 LOCK TABLES `orders` WRITE;
 /*!40000 ALTER TABLE `orders` DISABLE KEYS */;
-INSERT INTO `orders` VALUES (1,2,80970000,'pending',', Binh Phu 2','saved_card','2026-06-02 02:28:09','admin@nexus.com','admin test','0987654321'),(2,2,22990000,'pending',', Binh Phu 2','saved_card','2026-06-02 02:28:30','admin@nexus.com','admin test','0987654321'),(3,2,22990000,'pending','Nha Trang city, Vietnam','cod','2026-06-02 02:29:00','admin@nexus.com','admin test','0987654321'),(4,2,80970000,'pending',', Binh Phu 2','saved_bank','2026-06-02 02:39:10','admin@nexus.com','admin test','0987654321'),(5,2,34990000,'pending','Nha Trang city, Vietnam','saved_bank','2026-06-02 02:41:59','admin@nexus.com','admin test','0987654321'),(6,2,34990000,'pending','Nha Trang city, Vietnam','saved_bank','2026-06-02 02:42:49','admin@nexus.com','admin test','0987654321');
+INSERT INTO `orders` VALUES (1,2,80970000,'completed',', Binh Phu 2','saved_card','2026-06-02 02:28:09','admin@nexus.com','admin test','0987654321'),(2,2,22990000,'pending',', Binh Phu 2','saved_card','2026-06-02 02:28:30','admin@nexus.com','admin test','0987654321'),(3,2,22990000,'pending','Nha Trang city, Vietnam','cod','2026-06-02 02:29:00','admin@nexus.com','admin test','0987654321'),(4,2,80970000,'pending',', Binh Phu 2','saved_bank','2026-06-02 02:39:10','admin@nexus.com','admin test','0987654321'),(5,2,34990000,'pending','Nha Trang city, Vietnam','saved_bank','2026-06-02 02:41:59','admin@nexus.com','admin test','0987654321'),(6,2,34990000,'pending','Nha Trang city, Vietnam','saved_bank','2026-06-02 02:42:49','admin@nexus.com','admin test','0987654321'),(7,2,6990000,'pending','Nha Trang city, Vietnam','saved_bank','2026-06-02 06:16:17','admin@nexus.com','admin test','0987654321'),(8,2,25180000,'pending','Nha Trang city, Vietnam','saved_card','2026-06-02 06:18:01','admin@nexus.com','admin test','0987654321');
 /*!40000 ALTER TABLE `orders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -190,7 +191,7 @@ CREATE TABLE `payment_banks` (
   PRIMARY KEY (`id`),
   KEY `fk_banks_users` (`user_id`),
   CONSTRAINT `fk_banks_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -199,7 +200,7 @@ CREATE TABLE `payment_banks` (
 
 LOCK TABLES `payment_banks` WRITE;
 /*!40000 ALTER TABLE `payment_banks` DISABLE KEYS */;
-INSERT INTO `payment_banks` VALUES (1,2,'abc','123456789','Phan Nhat Tan','','2026-06-02 08:05:54');
+INSERT INTO `payment_banks` VALUES (1,2,'ABC','123456789','Phan Nhat Tan','','2026-06-02 08:05:54');
 /*!40000 ALTER TABLE `payment_banks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -221,7 +222,7 @@ CREATE TABLE `payment_cards` (
   PRIMARY KEY (`id`),
   KEY `fk_cards_users` (`user_id`),
   CONSTRAINT `fk_cards_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -230,7 +231,7 @@ CREATE TABLE `payment_cards` (
 
 LOCK TABLES `payment_cards` WRITE;
 /*!40000 ALTER TABLE `payment_cards` DISABLE KEYS */;
-INSERT INTO `payment_cards` VALUES (2,2,'MB VISA CREDIT','**** **** **** 7560','09/28','','2026-06-02 07:50:09'),(4,2,'MB VISA CREDIT','**** **** **** 1111','09/28','','2026-06-02 08:02:31');
+INSERT INTO `payment_cards` VALUES (2,2,'MB VISA CREDIT','**** **** **** 7560','09/28','','2026-06-02 07:50:09'),(4,2,'MB VISA CREDIT','**** **** **** 9990','09/28','','2026-06-02 08:02:31');
 /*!40000 ALTER TABLE `payment_cards` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -351,7 +352,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'Phan','Tan','tan.pn.65cntt@ntu.edu.vn','0123456789','$2a$10$6rTdlHLSWRmtP6QR4wfMwuMnJy4ldVps3FlZ2zft5gzmHCHU4Ef7.','customer','2026-06-02 02:35:13'),(2,'test','admin','admin@nexus.com','0987654321','$2a$10$DTI1/yu8DgXYDs1dTPuKCeJjaFhLGtYfae7YPAkKMNS9CLNVwhFUq','customer','2026-06-02 07:07:59');
+INSERT INTO `users` VALUES (1,'Phan','Tan','admin@nexus.com','0123456789','$2a$10$ihWdN0UuqpPJc/kCn.l54OWaHRrEprAU12qxALJcQGcfq5q2O6yiK','admin','2026-06-02 02:35:13'),(2,'test','user1','user@nexus.com','0987654321','$2a$10$fCfl/oG3Fs6yyY9MfgFmOO2zjc52leUP3XNMZFM4Y/ro/w3hwAPo2','customer','2026-06-02 07:07:59');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -364,4 +365,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-06-02 17:08:38
+-- Dump completed on 2026-06-03  0:19:57
