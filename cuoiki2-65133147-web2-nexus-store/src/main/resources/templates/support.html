@@ -6,6 +6,7 @@
     <title>NEXUS - Hỗ trợ Khách hàng</title>
     <link rel="stylesheet" th:href="@{/css/support.css}">
     <link rel="stylesheet" th:href="@{/css/search.css}">
+    <link rel="stylesheet" th:href="@{/css/chatbot.css}">
 </head>
 <body class="rail-collapsed">
 
@@ -241,7 +242,45 @@
         <p>© 2026 NEXUS Global Store. Bản quyền thiết kế tối giản thuộc về hệ sinh thái di động NEXUS.</p>
     </footer>
 
+    <!-- ===================== AI Chat Widget — Trợ lý Nexus ===================== -->
+    <div id="aiChat" class="ai-chat">
+        <button id="aiChatToggle" class="ai-chat-toggle" aria-label="Mở trợ lý ảo">
+            <svg class="icon-chat" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+            <svg class="icon-close" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+
+        <div class="ai-chat-panel" id="aiChatPanel">
+            <div class="ai-chat-header">
+                <div class="ai-chat-title">
+                    <span class="ai-chat-avatar">N</span>
+                    <div>
+                        <strong>Trợ lý Nexus</strong>
+                        <small>Trực tuyến</small>
+                    </div>
+                </div>
+                <div class="ai-chat-header-actions">
+                    <button id="aiChatReset" type="button" aria-label="Cuộc trò chuyện mới" title="Cuộc trò chuyện mới">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                    </button>
+                    <button id="aiChatClose" type="button" aria-label="Đóng">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                    </button>
+                </div>
+            </div>
+
+            <div class="ai-chat-body" id="aiChatBody"></div>
+
+            <form class="ai-chat-input" id="aiChatForm" autocomplete="off">
+                <input type="text" id="aiChatInput" placeholder="Nhập câu hỏi của bạn..." maxlength="1000">
+                <button type="submit" id="aiChatSend" aria-label="Gửi">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </form>
+        </div>
+    </div>
+
     <script th:src="@{/js/support.js}"></script>
     <script th:src="@{/js/search.js}"></script>
+    <script th:src="@{/js/chatbot.js}"></script>
 </body>
 </html>

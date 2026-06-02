@@ -361,3 +361,25 @@
     border: 1.5px solid var(--bg-surface);
     z-index: 1;
 }
+
+/* ==========================================================================
+   HELP CENTER SEARCH — lọc Chủ đề & FAQ
+   ========================================================================== */
+.support-hidden { display: none !important; }
+
+mark.support-hl {
+    background: #ffe680;
+    color: inherit;
+    border-radius: 3px;
+    padding: 0 2px;
+}
+
+.support-no-results {
+    text-align: center;
+    padding: 2.5rem 1rem;
+    color: var(--text-muted);
+    font-size: 1rem;
+    line-height: 1.6;
+    animation: fadeUpIn 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.support-no-results strong { color: var(--primary); }

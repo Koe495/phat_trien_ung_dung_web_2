@@ -154,4 +154,113 @@ document.addEventListener('DOMContentLoaded', () => {
                 });
             });
 
+            /* --- 6. Help Center Search: lọc Chủ đề + FAQ theo từ khóa --- */
+            const helpSearchInput = document.querySelector('.big-search-input');
+            if (helpSearchInput) {
+                const topicsSection = document.getElementById('topics');
+                const faqSection    = document.getElementById('faq');
+                const topicCards    = Array.from(document.querySelectorAll('.support-topic-card'));
+                const faqItemsAll   = Array.from(document.querySelectorAll('.faq-item'));
+
+                // Bỏ dấu tiếng Việt + lowercase để tìm không phân biệt dấu (giữ nguyên độ dài chuỗi)
+                const norm = (s) => (s || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[̀-ͯ]/g, '')
+                    .replace(/đ/g, 'd');
+
+                // Tách phần chữ của câu hỏi FAQ ra <span> riêng (giữ nguyên icon mũi tên)
+                faqItemsAll.forEach(item => {
+                    const btn = item.querySelector('.faq-question');
+                    const svg = btn.querySelector('svg');
+                    const text = btn.textContent.trim();
+                    btn.textContent = '';
+                    const span = document.createElement('span');
+                    span.className = 'faq-q-text';
+                    span.textContent = text;
+                    btn.appendChild(span);
+                    if (svg) btn.appendChild(svg);
+                    item._qText = text;
+                    const ansInner = item.querySelector('.faq-answer-inner');
+                    item._aText = ansInner ? ansInner.textContent.trim() : '';
+                });
+
+                // Lưu text gốc của thẻ chủ đề
+                topicCards.forEach(card => {
+                    const h = card.querySelector('h3');
+                    const p = card.querySelector('p');
+                    card._hText = h ? h.textContent : '';
+                    card._pText = p ? p.textContent : '';
+                });
+
+                // Thông báo "không có kết quả"
+                const noResult = document.createElement('p');
+                noResult.className = 'support-no-results';
+                noResult.style.display = 'none';
+                noResult.innerHTML = 'Không tìm thấy nội dung phù hợp. Bạn thử từ khóa khác, '
+                                   + 'hoặc hỏi <strong>Trợ lý Nexus</strong> ở góc phải màn hình nhé.';
+                faqSection.querySelector('.section-container').appendChild(noResult);
+
+                // Tô sáng từ khóa trong 1 phần tử văn bản
+                function highlight(el, original, q) {
+                    if (!el) return;
+                    if (!q) { el.textContent = original; return; }
+                    const idx = norm(original).indexOf(norm(q));
+                    if (idx === -1) { el.textContent = original; return; }
+                    el.innerHTML = original.substring(0, idx)
+                        + '<mark class="support-hl">' + original.substring(idx, idx + q.length) + '</mark>'
+                        + original.substring(idx + q.length);
+                }
+
+                function runSearch(raw) {
+                    const q  = raw.trim();
+                    const nq = norm(q);
+
+                    let topicMatches = 0;
+                    topicCards.forEach(card => {
+                        const match = !nq || norm(card._hText + ' ' + card._pText).includes(nq);
+                        card.classList.toggle('support-hidden', !match);
+                        if (match) topicMatches++;
+                        highlight(card.querySelector('h3'), card._hText, q);
+                        highlight(card.querySelector('p'),  card._pText, q);
+                    });
+
+                    let faqMatches = 0;
+                    faqItemsAll.forEach(item => {
+                        const match = !nq || norm(item._qText + ' ' + item._aText).includes(nq);
+                        item.classList.toggle('support-hidden', !match);
+                        if (match) faqMatches++;
+                        highlight(item.querySelector('.faq-q-text'), item._qText, q);
+
+                        const answer = item.querySelector('.faq-answer');
+                        if (q && match) {                 // đang tìm & khớp -> tự mở
+                            item.classList.add('active');
+                            answer.style.maxHeight = answer.scrollHeight + 'px';
+                        } else {                          // không khớp hoặc ô tìm trống -> đóng lại
+                            item.classList.remove('active');
+                            answer.style.maxHeight = 0;
+                        }
+                    });
+
+                    topicsSection.style.display = (q && topicMatches === 0) ? 'none' : '';
+                    noResult.style.display      = (q && faqMatches === 0) ? 'block' : 'none';
+                }
+
+                let searchTimer;
+                helpSearchInput.addEventListener('input', (e) => {
+                    clearTimeout(searchTimer);
+                    const val = e.target.value;
+                    searchTimer = setTimeout(() => runSearch(val), 180);
+                });
+
+                // Enter -> cuộn xuống khu vực kết quả
+                helpSearchInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        const target = topicsSection.style.display === 'none' ? faqSection : topicsSection;
+                        window.scrollTo({ top: target.offsetTop - 60, behavior: 'smooth' });
+                    }
+                });
+            }
+
         });

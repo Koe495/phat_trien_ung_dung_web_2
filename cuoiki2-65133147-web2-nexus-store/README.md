@@ -16,6 +16,7 @@ Nexus Store là một ứng dụng thương mại điện tử xây dựng bằn
 - Quản lý sản phẩm, danh mục, đơn hàng đầy đủ CRUD.
 - Giỏ hàng và checkout (chọn màu sắc sản phẩm).
 - **Gửi email tự động (async)** xác nhận đơn hàng khi đặt hàng và khi đơn hoàn tất.
+- **Chatbot AI (Groq Llama)** ở trang Hỗ trợ — tư vấn sản phẩm, chính sách, đơn hàng.
 - Tìm kiếm sản phẩm trả về JSON (`/api/search`).
 - Template engine: Thymeleaf (server-side rendering).
 
@@ -240,6 +241,8 @@ Unix / macOS:
 | GET/POST | `/register` | Đăng ký |
 | GET/POST | `/login` | Đăng nhập |
 | GET | `/api/search?q=...` | Tìm kiếm sản phẩm (JSON) |
+| POST | `/api/support/chat` | Gửi câu hỏi tới chatbot AI (JSON) |
+| POST | `/api/support/chat/reset` | Xóa lịch sử hội thoại chatbot |
 
 **Admin**
 
@@ -268,7 +271,34 @@ Yêu cầu Gmail: bật **2-Factor Authentication** và tạo **App Password** t
 
 ---
 
-## 13. Troubleshooting
+## 13. Chatbot AI (Groq Llama)
+
+Trang Hỗ trợ có widget chat nổi góc phải, gọi mô hình **Llama** qua **Groq API** (endpoint tương thích OpenAI).
+
+**Luồng hoạt động:**
+```
+chatbot.js  →  POST /api/support/chat  →  SupportChatController
+            →  AiChatService  →  Groq API (llama-3.3-70b)  →  trả lời
+```
+
+- `AiChatService` nhồi sẵn **system prompt**: vai trò trợ lý, chính sách bảo hành/đổi trả, và **danh sách sản phẩm đang bán** (RAG đơn giản) để trả lời đúng dữ liệu cửa hàng.
+- Lịch sử hội thoại lưu trong **HttpSession** (giới hạn 12 message) để bot nhớ ngữ cảnh.
+- API key **gọi từ backend**, không lộ ra JavaScript. Có cơ chế **fallback** khi API lỗi/chưa cấu hình.
+
+**Cấu hình:** lấy key miễn phí tại [console.groq.com/keys](https://console.groq.com/keys), rồi đặt biến môi trường:
+```bash
+# Windows (PowerShell)
+$env:GROQ_API_KEY = "gsk_xxxxxxxx"
+# Unix/macOS
+export GROQ_API_KEY=gsk_xxxxxxxx
+```
+Hoặc sửa trực tiếp `groq.api.key` trong `application.properties`. Đổi model qua `groq.api.model` (mặc định `llama-3.3-70b-versatile`).
+
+> Nếu chưa cấu hình key, chatbot vẫn chạy nhưng trả về thông báo hướng dẫn liên hệ hotline.
+
+---
+
+## 14. Troubleshooting
 
 | Lỗi | Nguyên nhân thường gặp | Cách xử lý |
 |---|---|---|
@@ -279,15 +309,16 @@ Yêu cầu Gmail: bật **2-Factor Authentication** và tạo **App Password** t
 
 ---
 
-## 14. Lưu ý bảo mật (Production)
+## 15. Lưu ý bảo mật (Production)
 
 - Không commit `application.properties` chứa password lên Git — dùng biến môi trường.
 - Đổi `spring.jpa.hibernate.ddl-auto` sang `validate` cho môi trường production.
 - Bật CSRF, HTTPS, và kiểm tra session fixation trước khi deploy thật.
+- Không commit `GROQ_API_KEY` lên Git — dùng biến môi trường.
 
 ---
 
-## 15. Tác giả
+## 16. Tác giả
 
 - **Phan Nhật Tấn** — MSSV: 65133147
 - GitHub: [Koe495](https://github.com/Koe495)
