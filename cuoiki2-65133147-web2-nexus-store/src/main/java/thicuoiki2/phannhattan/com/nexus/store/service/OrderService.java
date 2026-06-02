@@ -15,6 +15,9 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     @Transactional
     public Order placeOrder(User user,
                             String lastName, String firstName,
@@ -52,6 +55,11 @@ public class OrderService {
 
         order.setTotalAmount(total);
         order.setItems(orderItems);
-        return orderRepository.save(order);
+        Order savedOrder = orderRepository.save(order);
+
+        // Gửi email xác nhận đặt hàng
+        emailService.sendOrderConfirmation(savedOrder);
+
+        return savedOrder;
     }
 }

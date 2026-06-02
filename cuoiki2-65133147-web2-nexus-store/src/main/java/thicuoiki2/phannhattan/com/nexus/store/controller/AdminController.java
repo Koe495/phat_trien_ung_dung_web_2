@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import thicuoiki2.phannhattan.com.nexus.store.entity.Category;
@@ -17,6 +18,7 @@ import thicuoiki2.phannhattan.com.nexus.store.repository.CategoryRepository;
 import thicuoiki2.phannhattan.com.nexus.store.repository.OrderRepository;
 import thicuoiki2.phannhattan.com.nexus.store.repository.ProductRepository;
 import thicuoiki2.phannhattan.com.nexus.store.repository.UserRepository;
+import thicuoiki2.phannhattan.com.nexus.store.service.EmailService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +31,7 @@ public class AdminController {
     @Autowired private ProductRepository productRepository;
     @Autowired private CategoryRepository categoryRepository;
     @Autowired private OrderRepository orderRepository;
+    @Autowired private EmailService emailService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -331,6 +334,7 @@ public class AdminController {
         return "redirect:/admin#categories";
     }
 
+    @Transactional
     @PostMapping("/admin/orders/update-status")
     public String updateOrderStatus(@RequestParam Integer id,
                                     @RequestParam String status,
@@ -346,6 +350,14 @@ public class AdminController {
                     .orElseThrow(() -> new RuntimeException("Đơn hàng không tồn tại."));
             order.setStatus(status);
             orderRepository.save(order);
+
+            // Gửi email thông báo khi đơn hàng hoàn tất
+            if ("completed".equalsIgnoreCase(status)) {
+                // Force-initialize lazy collection while session is still open
+                if (order.getItems() != null) order.getItems().size();
+                emailService.sendOrderCompleted(order);
+            }
+
             redirectAttributes.addFlashAttribute("successMsg", "Đã cập nhật trạng thái đơn hàng.");
         }
         return "redirect:/admin#orders";
