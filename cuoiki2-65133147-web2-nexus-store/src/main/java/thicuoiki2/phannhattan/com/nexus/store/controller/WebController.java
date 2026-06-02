@@ -13,6 +13,8 @@ import thicuoiki2.phannhattan.com.nexus.store.service.PaymentService;
 import thicuoiki2.phannhattan.com.nexus.store.service.UserService;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 public class WebController {
@@ -39,8 +41,65 @@ public class WebController {
     public String home(HttpSession session, Model model) {
         User loggedInUser = (User) session.getAttribute("loggedInUser");
         model.addAttribute("loggedInUser", loggedInUser);
+
+        // 3 sản phẩm mỗi category cho section sản phẩm ở index
+        List<Product> all = productRepository.findByStatus("active");
+        model.addAttribute("phonesPreview",     all.stream().filter(p -> "phones".equals(p.getCategory().getSlug())).limit(3).collect(Collectors.toList()));
+        model.addAttribute("wearablesPreview",  all.stream().filter(p -> "wearables".equals(p.getCategory().getSlug())).limit(3).collect(Collectors.toList()));
+        model.addAttribute("accessoriesPreview",all.stream().filter(p -> "accessories".equals(p.getCategory().getSlug())).limit(3).collect(Collectors.toList()));
+
         addCartCount(loggedInUser, model);
         return "index";
+    }
+
+    /* ------------------------------------------------------------------ */
+    /*  Search API  GET /api/search?q=...  — trả về JSON tối đa 3 kết quả */
+    /* ------------------------------------------------------------------ */
+    @GetMapping("/api/search")
+    @ResponseBody
+    public List<Map<String, Object>> searchProducts(@RequestParam String q) {
+        if (q == null || q.trim().length() < 1) return List.of();
+
+        String keyword = q.trim().toLowerCase();
+
+        // Fuzzy score: đếm số ký tự của keyword xuất hiện theo thứ tự trong chuỗi target
+        java.util.function.BiFunction<String, String, Integer> fuzzyScore = (target, kw) -> {
+            int score = 0, ti = 0;
+            String t = target.toLowerCase();
+            for (int ki = 0; ki < kw.length() && ti < t.length(); ki++) {
+                while (ti < t.length() && t.charAt(ti) != kw.charAt(ki)) ti++;
+                if (ti < t.length()) { score++; ti++; }
+            }
+            // Bonus nếu target chứa keyword nguyên chuỗi
+            if (t.contains(kw)) score += kw.length() * 2;
+            return score;
+        };
+
+        int minScore = Math.max(1, keyword.length() / 2);
+
+        return productRepository.findByStatus("active").stream()
+                .map(p -> {
+                    String searchText = p.getName()
+                            + " " + (p.getSpec() != null ? p.getSpec() : "")
+                            + " " + p.getCategory().getName();
+                    int score = fuzzyScore.apply(searchText, keyword);
+                    return new Object[]{ p, score };
+                })
+                .filter(pair -> (int) pair[1] >= minScore)
+                .sorted((a, b) -> Integer.compare((int) b[1], (int) a[1]))
+                .limit(10)
+                .map(pair -> {
+                    Product p = (Product) pair[0];
+                    Map<String, Object> item = new java.util.HashMap<>();
+                    item.put("id",          p.getId());
+                    item.put("name",        p.getName());
+                    item.put("slug",        p.getSlug());
+                    item.put("price",       p.getPrice());
+                    item.put("thumbnailBg", p.getThumbnailBg() != null ? p.getThumbnailBg() : "");
+                    item.put("category",    p.getCategory().getName());
+                    return item;
+                })
+                .collect(Collectors.toList());
     }
 
     /* ------------------------------------------------------------------ */

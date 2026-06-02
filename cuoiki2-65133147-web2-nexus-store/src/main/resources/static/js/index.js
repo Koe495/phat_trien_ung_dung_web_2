@@ -1,31 +1,35 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+            /* Reset scroll về đầu trang — tránh trình duyệt khôi phục vị trí cũ */
+			window.addEventListener('load', () => {
+
+			    window.scrollTo(0, 0);
+
+			    requestAnimationFrame(() => {
+
+			        railItems.forEach(nav => nav.classList.remove('active'));
+
+			        const overviewItem =
+			            document.querySelector('.rail-item[href="#overview"]');
+
+			        overviewItem?.classList.add('active');
+
+			        updatePillPosition();
+
+			    });
+
+			});
+			let isInitialLoad = true;
+
+			setTimeout(() => {
+			    isInitialLoad = false;
+			}, 300);
             
             /* --- Cờ kiểm soát cuộn trang để khóa hoạt động ghim Indicator --- */
             let isScrollingToTarget = false; 
             let scrollEndTimeout = null;
 
-            /* --- Xử lý tính năng Tìm kiếm mở rộng (Expandable Search Bar) --- */
-            const searchWrapper = document.getElementById('searchWrapper');
-            const searchBtn = document.getElementById('searchBtn');
-            const searchInput = document.getElementById('searchInput');
-
-            searchBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                if (!searchWrapper.classList.contains('expanded')) {
-                    searchWrapper.classList.add('expanded');
-                    setTimeout(() => {
-                        searchInput.focus(); 
-                    }, 50);
-                }
-            });
-
-            // Thu hẹp search bar khi nhấn ra vùng trống
-            document.addEventListener('click', (e) => {
-                if (searchWrapper.classList.contains('expanded') && !searchWrapper.contains(e.target)) {
-                    searchWrapper.classList.remove('expanded');
-                    searchInput.value = ''; 
-                }
-            });
+            /* Search được xử lý bởi search.js */
 
 
             /* --- 1. Collapsible Nav Rail Logic --- */
@@ -59,30 +63,50 @@ document.addEventListener('DOMContentLoaded', () => {
             window.addEventListener('load', updatePillPosition);
             window.addEventListener('resize', updatePillPosition);
 
+            /* Force active về mục đầu tiên khi trang mới load */
+            const firstRailItem = document.querySelector('.rail-item');
+            if (firstRailItem) {
+                railItems.forEach(nav => nav.classList.remove('active'));
+                firstRailItem.classList.add('active');
+                updatePillPosition();
+            }
 
-            /* --- 3. Scroll Spy (Chỉ cập nhật Sidebar Rail khi KHÔNG trong quá trình click scroll tự động) --- */
+
+            /* --- 3. Scroll Spy --- */
             const sections = document.querySelectorAll('section[id]');
-            
+
             const observerOptions = {
                 root: null,
-                rootMargin: '-20% 0px -75% 0px', 
+                rootMargin: '-10% 0px -85% 0px',  // trigger khi section vào top 15% viewport
                 threshold: 0
             };
 
             const observer = new IntersectionObserver((entries) => {
-                if (isScrollingToTarget) return;
+                if (isInitialLoad || isScrollingToTarget) return;
 
                 entries.forEach(entry => {
+                    const id = entry.target.getAttribute('id');
+                    const railItem = document.querySelector(`.rail-item[href="#${id}"]`);
+                    if (!railItem) return;
+
                     if (entry.isIntersecting) {
-                        const id = entry.target.getAttribute('id');
-                        
-                        // Chỉ cập nhật trạng thái Sidebar Rail
-                        const correspondingRailItem = document.querySelector(`.rail-item[href="#${id}"]`);
-                        if (correspondingRailItem && !correspondingRailItem.classList.contains('active')) {
-                            railItems.forEach(nav => nav.classList.remove('active'));
-                            correspondingNavItem = correspondingRailItem;
-                            correspondingRailItem.classList.add('active');
-                            updatePillPosition();
+                        // Section đi vào vùng trigger → activate
+                        railItems.forEach(nav => nav.classList.remove('active'));
+                        railItem.classList.add('active');
+                        updatePillPosition();
+                    } else if (entry.boundingClientRect.top > 0) {
+                        // Section thoát ra phía DƯỚI viewport (cuộn lên) →
+                        // activate item trước nó trong danh sách
+                        const allSections = [...document.querySelectorAll('section[id]')];
+                        const idx = allSections.indexOf(entry.target);
+                        if (idx > 0) {
+                            const prevId = allSections[idx - 1].getAttribute('id');
+                            const prevItem = document.querySelector(`.rail-item[href="#${prevId}"]`);
+                            if (prevItem) {
+                                railItems.forEach(nav => nav.classList.remove('active'));
+                                prevItem.classList.add('active');
+                                updatePillPosition();
+                            }
                         }
                     }
                 });

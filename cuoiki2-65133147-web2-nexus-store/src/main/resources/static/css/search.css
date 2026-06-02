@@ -1,0 +1,110 @@
+/* ==========================================================================
+   SEARCH DROPDOWN — dùng chung cho index.css / products.css / support.css
+   ========================================================================== */
+
+/* Dropdown container */
+.search-wrapper { position: relative; }
+
+.search-dropdown {
+    position: absolute;
+    top: calc(100% + 10px);
+    right: 0;
+    width: 340px;
+    max-height: 312px;          /* ~3 items x 72px + padding */
+    overflow-y: auto;
+    background: var(--bg-surface);
+    border-radius: 18px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.14);
+    border: 1px solid var(--border-light);
+    display: none;
+    z-index: 300;
+    scroll-behavior: smooth;
+}
+
+/* Custom scrollbar trong dropdown */
+.search-dropdown::-webkit-scrollbar { width: 4px; }
+.search-dropdown::-webkit-scrollbar-track { background: transparent; }
+.search-dropdown::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 2px; }
+
+.search-dropdown.visible { display: block; }
+
+/* Mỗi kết quả */
+.search-result-item {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    padding: 0.85rem 1rem;
+    text-decoration: none;
+    color: var(--text-main);
+    transition: background 0.15s;
+    border-bottom: 1px solid var(--border-light);
+}
+.search-result-item:last-child { border-bottom: none; }
+.search-result-item:hover { background: var(--bg-base); }
+
+/* Thumbnail */
+.search-result-thumb {
+    width: 46px; height: 46px;
+    border-radius: 10px;
+    flex-shrink: 0;
+    background: var(--bg-base);
+}
+
+/* Text info */
+.search-result-info { flex: 1; min-width: 0; }
+
+.search-result-name {
+    font-size: 0.88rem;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* highlight tag */
+.search-result-name mark {
+    background: rgba(0,113,227,0.15);
+    color: var(--primary);
+    border-radius: 2px;
+    padding: 0 1px;
+}
+
+.search-result-meta {
+    font-size: 0.76rem;
+    color: var(--text-muted);
+    margin-top: 0.2rem;
+}
+
+/* Arrow icon */
+.search-result-arrow {
+    width: 14px; height: 14px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    opacity: 0;
+    transition: opacity 0.15s, transform 0.15s;
+}
+.search-result-item:hover .search-result-arrow {
+    opacity: 1;
+    transform: translateX(2px);
+}
+
+/* Empty state */
+.search-no-result {
+    padding: 1.5rem 1rem;
+    font-size: 0.88rem;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Scroll hint — mờ dần ở đáy khi có nhiều hơn 3 kết quả */
+.search-dropdown::after {
+    content: '';
+    position: sticky;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 32px;
+    background: linear-gradient(to bottom, transparent, var(--bg-surface));
+    display: block;
+    pointer-events: none;
+}

@@ -33,7 +33,7 @@
                 document.addEventListener('mouseover', (e) => {
                     if (e.target.closest(this.clickableSelector)) {
                         this.hexagon.classList.add('hovering');
-                        this.hexagon.style.transform = ''; // Nhường chỗ cho CSS Animation
+                        this.hexagon.style.transform = '';
                     }
                 });
 
@@ -68,34 +68,7 @@
             }
         }
 
-        /**
-         * Lớp xử lý Thanh Tìm kiếm mở rộng
-         */
-        class SearchBar {
-            constructor() {
-                this.wrapper = document.getElementById('searchWrapper');
-                this.btn = document.getElementById('searchBtn');
-                this.input = document.getElementById('searchInput');
-                if(this.wrapper && this.btn && this.input) this.init();
-            }
-
-            init() {
-                this.btn.addEventListener('click', (e) => {
-                    e.stopPropagation(); 
-                    if (!this.wrapper.classList.contains('expanded')) {
-                        this.wrapper.classList.add('expanded');
-                        setTimeout(() => this.input.focus(), 50);
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    if (this.wrapper.classList.contains('expanded') && !this.wrapper.contains(e.target)) {
-                        this.wrapper.classList.remove('expanded');
-                        this.input.value = ''; 
-                    }
-                });
-            }
-        }
+        /* Search được xử lý bởi search.js */
 
         /**
          * Lớp xử lý Thanh điều hướng (Sidebar Rail & Smooth Scroll)
@@ -113,18 +86,15 @@
             }
 
             init() {
-                // Toggle Sidebar
                 this.railToggle.addEventListener('click', () => {
                     this.body.classList.toggle('rail-collapsed');
                     setTimeout(() => this.updatePill(), 400); 
                 });
 
-                // Smooth Scroll Links
                 document.querySelectorAll('.rail-item[href^="#"]').forEach(anchor => {
                     anchor.addEventListener('click', (e) => this.handleNavClick(e, anchor));
                 });
 
-                // Scroll Spy
                 const observer = new IntersectionObserver((entries) => {
                     if (this.isScrolling) return;
                     entries.forEach(entry => {
@@ -175,7 +145,6 @@
                 const activeItem = document.querySelector('.rail-item.active');
                 if (!activeItem || !this.slidingPill) return;
                 
-                // Get pill height from CSS var or fallback
                 const pillH = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--pill-height')) || 36;
                 const offset = activeItem.offsetTop + (activeItem.offsetHeight - pillH) / 2;
                 this.slidingPill.style.transform = `translateY(${offset}px)`;
@@ -183,7 +152,7 @@
         }
 
         /**
-         * Lớp xử lý thanh cuộn ngang sản phẩm & Dynamic Bleed (Tràn viền thông minh)
+         * Lớp xử lý thanh cuộn ngang sản phẩm & Dynamic Bleed
          */
         class HorizontalScroller {
             constructor(sectionElement) {
@@ -203,7 +172,6 @@
                 this.scroller.addEventListener('scroll', () => this.updateUI());
                 window.addEventListener('resize', () => this.updateUI());
 
-                // Khởi động UI delay nhẹ để chờ font/layout render xong
                 setTimeout(() => this.updateUI(), 150);
             }
 
@@ -217,11 +185,9 @@
                 const sLeft = this.scroller.scrollLeft;
                 const sMax = this.scroller.scrollWidth - this.scroller.clientWidth;
 
-                // Cập nhật trạng thái nút bấm
                 if (this.prevBtn) this.prevBtn.disabled = sLeft <= 2;
                 if (this.nextBtn) this.nextBtn.disabled = sLeft >= sMax - 2;
 
-                // Cập nhật mặt nạ (Clip-path) tràn viền
                 const winW = window.innerWidth;
                 let padX = winW >= 1024 ? 64 : 32; 
                 if (winW > CONFIG.LAYOUT_MAX_WIDTH) {
@@ -235,7 +201,7 @@
         }
 
         /**
-         * Lớp xử lý hiệu ứng cuộn trang Fade Up (Scroll Reveal)
+         * Lớp xử lý hiệu ứng Scroll Reveal
          */
         class ScrollReveal {
             constructor() {
@@ -263,7 +229,6 @@
         const app = {
             init() {
                 new CustomCursor();
-                new SearchBar();
                 new Navigation();
                 new ScrollReveal();
                 

@@ -15,9 +15,6 @@ public class OrderService {
     @Autowired
     private OrderRepository orderRepository;
 
-    @Autowired
-    private CartService cartService;
-
     @Transactional
     public Order placeOrder(User user,
                             String lastName, String firstName,
@@ -55,11 +52,6 @@ public class OrderService {
 
         order.setTotalAmount(total);
         order.setItems(orderItems);
-        Order saved = orderRepository.save(order);
-
-        // Xoá giỏ hàng sau khi đặt thành công
-        cartService.clearCart(user);
-
-        return saved;
+        return orderRepository.save(order);
     }
 }

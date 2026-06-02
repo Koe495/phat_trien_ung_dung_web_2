@@ -3,25 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
             let isScrollingToTarget = false; 
             let scrollEndTimeout = null;
 
-            /* --- 1. Expandable Search Bar --- */
-            const searchWrapper = document.getElementById('searchWrapper');
-            const searchBtn = document.getElementById('searchBtn');
-            const searchInput = document.getElementById('searchInput');
-
-            searchBtn.addEventListener('click', (e) => {
-                e.stopPropagation(); 
-                if (!searchWrapper.classList.contains('expanded')) {
-                    searchWrapper.classList.add('expanded');
-                    setTimeout(() => { searchInput.focus(); }, 50);
-                }
-            });
-
-            document.addEventListener('click', (e) => {
-                if (searchWrapper.classList.contains('expanded') && !searchWrapper.contains(e.target)) {
-                    searchWrapper.classList.remove('expanded');
-                    searchInput.value = ''; 
-                }
-            });
+            /* Search được xử lý bởi search.js */
 
             /* --- 2. Custom Trailing Cursor --- */
             const cursor = document.getElementById('customCursor');
