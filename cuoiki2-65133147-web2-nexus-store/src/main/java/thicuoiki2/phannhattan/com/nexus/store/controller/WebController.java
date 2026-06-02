@@ -10,6 +10,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import thicuoiki2.phannhattan.com.nexus.store.entity.Product;
 import thicuoiki2.phannhattan.com.nexus.store.entity.User;
 import thicuoiki2.phannhattan.com.nexus.store.repository.ProductRepository;
+import thicuoiki2.phannhattan.com.nexus.store.repository.OrderRepository;
 import thicuoiki2.phannhattan.com.nexus.store.service.CartService;
 import thicuoiki2.phannhattan.com.nexus.store.service.PaymentService;
 import thicuoiki2.phannhattan.com.nexus.store.service.UserService;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 public class WebController {
 
     @Autowired private ProductRepository productRepository;
+    @Autowired private OrderRepository   orderRepository;
     @Autowired private UserService        userService;
     @Autowired private PaymentService     paymentService;
     @Autowired private CartService        cartService;
@@ -138,6 +140,7 @@ public class WebController {
         model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("savedCards", paymentService.getCardsByUser(loggedInUser));
         model.addAttribute("savedBanks", paymentService.getBanksByUser(loggedInUser));
+        model.addAttribute("orderHistory", orderRepository.findByUserOrderByCreatedAtDesc(loggedInUser));
         addCartCount(loggedInUser, model);
         return "user";
     }

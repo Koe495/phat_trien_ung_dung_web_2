@@ -1,58 +1,157 @@
-# Nexus Store — Cuối kỳ Web2
+# Nexus Store
 
-Một web store mẫu (dự án cuối kỳ) cho khóa Phát triển ứng dụng Web 2. Project này bao gồm phần giao diện (HTML/CSS/JavaScript) và phần backend (Java) để quản lý sản phẩm, người dùng và đơn hàng.
+Nexus Store là ứng dụng thương mại điện tử đơn giản xây dựng bằng Spring Boot và Thymeleaf. Dự án mô phỏng cửa hàng trực tuyến với giỏ hàng, thanh toán, tài khoản người dùng và trang quản trị admin.
 
-## Mô tả ngắn
-Nexus Store là ứng dụng web thương mại điện tử đơn giản phục vụ mục đích học tập: hiển thị sản phẩm, tìm kiếm, thêm vào giỏ hàng và mô phỏng quy trình đặt hàng. Dự án minh họa kiến trúc client-server cơ bản, CRUD cho sản phẩm, và tích hợp giao diện responsive.
+## Công nghệ chính
+
+- Java 17
+- Spring Boot 4.0.6
+- Spring Data JPA
+- Spring Security
+- Thymeleaf
+- MySQL
+- H2 Console (dependency runtime)
+- Lombok
+- Maven
 
 ## Tính năng chính
-- Danh mục và danh sách sản phẩm
-- Tìm kiếm và lọc sản phẩm
-- Thêm/sửa/xóa sản phẩm (trong trang quản trị)
-- Giỏ hàng và mô phỏng đặt hàng
-- API REST (backend Java) cung cấp dữ liệu cho frontend
-- Giao diện responsive (desktop & mobile)
 
-## Công nghệ sử dụng
-- Frontend: HTML, CSS, JavaScript
-- Backend: Java Spring Boot
-- Database: MySQL
-- Công cụ build: Maven
+### Người dùng
+- Đăng ký / đăng nhập / đăng xuất
+- Xem trang chủ, danh sách sản phẩm, chi tiết sản phẩm
+- Tìm kiếm sản phẩm qua API `/api/search?q=...`
+- Quản lý giỏ hàng: thêm, cập nhật số lượng, xóa sản phẩm
+- Thanh toán đơn hàng
+- Quản lý tài khoản:
+  - cập nhật profile
+  - đổi mật khẩu
+  - lưu thẻ thanh toán
+  - lưu tài khoản ngân hàng
+  - xóa thông tin thanh toán
 
-## Cấu trúc thư mục (ví dụ)
-- /src/main/java — mã nguồn Java (backend)
-- /src/main/resources — cấu hình, template, mã frontend
+### Admin
+- Trang quản trị `/admin`
+- Quản lý người dùng: xem, thêm, sửa, xóa
+- Quản lý sản phẩm: xem, thêm, sửa, xóa
+- Quản lý danh mục sản phẩm: xem, thêm, sửa, xóa
+- Quản lý đơn hàng: xem, đổi trạng thái, xóa
+- Bộ lọc admin:
+  - lọc user theo tên / email / điện thoại / role
+  - lọc sản phẩm theo tên / slug / mô tả / trạng thái / danh mục
+  - lọc đơn hàng theo trạng thái và nội dung
 
-## Yêu cầu trước khi chạy
-- Java JDK 11+
+## Cấu trúc dự án
+
+- `src/main/java/thicuoiki2/phannhattan/com/nexus/store/`
+  - `controller/` - controller xử lý request
+  - `entity/` - các thực thể JPA
+  - `repository/` - repository JPA
+  - `service/` - logic nghiệp vụ
+  - `config/` - cấu hình Spring Security
+
+- `src/main/resources/`
+  - `templates/` - Thymeleaf HTML
+  - `static/css/` - CSS
+  - `static/js/` - JavaScript
+  - `application.properties` - cấu hình ứng dụng
+
+## Cấu hình database
+
+Tập tin `src/main/resources/application.properties` đang sử dụng MySQL:
+
+```properties
+server.port=8080
+
+spring.datasource.url=jdbc:mysql://localhost:3306/nexus_db?useSSL=false&serverTimezone=UTC&characterEncoding=UTF-8
+spring.datasource.username=root
+spring.datasource.password=<your-password>
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+Lưu ý:
+- Database mặc định là MySQL.
+- Nếu cần, thay đổi URL, username, password.
+- `spring.jpa.hibernate.ddl-auto=update` sẽ tự động cập nhật schema.
+
+## Chạy dự án
+
+### Yêu cầu
+- Java 17
 - Maven
-- MySQL
-- Spring Boot CLI
+- MySQL đang chạy
+- Database `nexus_db` đã tồn tại (có thể dùng `nexus2.sql` để tạo dữ liệu ban đầu)
 
-## Cài đặt & chạy (hướng dẫn mẫu)
-1. Clone repo:
-   git clone https://github.com/Koe495/phat_trien_ung_dung_web_2.git
-2. Vào thư mục project:
-   phat_trien_ung_dung_web_2/cuoiki2-65133147-web2-nexus-store
-3. Cấu hình
-   - Thiết lập thông tin database mẫu trong file sql.
-   - SERVER PORT mặc định 8080
-4. Chạy backend (Maven):
-   mvn clean package
-    Dùng Spring Boot wrapper:
-   ./mvnw spring-boot:run
+### Lệnh chạy
+```bash
+cd e:/eclipse-workspace/phat_trien_ung_dung_web_2/cuoiki2-65133147-web2-nexus-store
+.\mvnw.cmd -DskipTests spring-boot:run
+```
 
-## Cấu hình môi trường mẫu
-Ví dụ file `.env` :
-DB_URL=jdbc:mysql://localhost:3306/nexusdb
-DB_USER=root
-DB_PASS={yourpassword}
-SERVER_PORT=8080
+Hoặc:
+```bash
+mvn clean package
+java -jar target/cuoiki2-65133147-web2-nexus-store-0.0.1-SNAPSHOT.jar
+```
 
-## Màn hình & Demo
-Thêm ảnh chụp màn hình vào thư mục `docs/screenshots` và cập nhật phần này với link hoặc ảnh trực quan.
+Truy cập:
+- `http://localhost:8080/`
 
+## Endpoint chính
 
-## Tác giả & Liên hệ
-- Tác giả: Phan Nhật Tấn (Koe495)
-- Email: tonphan495@gmail.com
+### Trang người dùng
+- `GET /` — trang chủ
+- `GET /products` — danh sách sản phẩm
+- `GET /product/{slug}` — chi tiết sản phẩm
+- `GET /cart` — giỏ hàng
+- `POST /cart/add` — thêm sản phẩm vào giỏ
+- `POST /cart/update` — cập nhật số lượng
+- `POST /cart/remove` — xóa sản phẩm
+- `GET /checkout` — trang thanh toán
+- `POST /checkout/place-order` — đặt hàng
+- `GET /support` — trang hỗ trợ
+- `GET /user` — trang tài khoản
+
+### Quản lý tài khoản
+- `POST /user/update-profile`
+- `POST /user/change-password`
+- `POST /user/save-card`
+- `POST /user/save-bank`
+- `POST /user/delete-payment`
+
+### Xác thực
+- `GET /register`
+- `POST /register`
+- `GET /login`
+- `POST /login`
+- `GET /logout`
+
+### Admin
+- `GET /admin`
+- `POST /admin/users/save`
+- `POST /admin/users/delete`
+- `POST /admin/products/save`
+- `POST /admin/products/delete`
+- `POST /admin/categories/save`
+- `POST /admin/categories/delete`
+- `POST /admin/orders/update-status`
+- `POST /admin/orders/delete`
+
+### API tìm kiếm
+- `GET /api/search?q=...` — trả về JSON kết quả tìm kiếm
+
+## Ghi chú kỹ thuật
+
+- `SecurityConfig` hiện cho phép toàn bộ request (`permitAll`) và tắt CSRF để dễ test form.
+- Xác thực được quản lý bằng session servlet (`loggedInUser`).
+- Quyền admin được xác định bằng `User.role == "admin"`.
+
+## Gợi ý cải tiến
+- Hoàn thiện cấu hình Spring Security phân quyền thực sự
+- Thêm validation form chi tiết ở phía server và client
+- Bổ sung xử lý lỗi và thông báo rõ ràng hơn
+- Cải thiện giao diện responsive
+```

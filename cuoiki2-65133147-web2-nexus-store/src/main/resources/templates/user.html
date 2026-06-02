@@ -98,6 +98,15 @@
                     </svg>
                     Thanh toán
                 </button>
+                <button class="sidebar-link" data-target="orders-pane">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                         stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 3h18v4H3z"></path>
+                        <path d="M5 7v13a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7"></path>
+                        <polyline points="3 11 12 16 21 11"></polyline>
+                    </svg>
+                    Lịch sử đơn hàng
+                </button>
                 <a th:href="@{/logout}" class="sidebar-link logout">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                          stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -547,8 +556,51 @@
 
             </div><!-- /.payment-pane -->
 
-        </div><!-- /.account-content -->
-    </main>
+                <div class="tab-pane" id="orders-pane">
+                    <div class="pane-header">
+                        <h2 class="pane-title">Lịch sử đơn hàng</h2>
+                        <p class="pane-subtitle">Xem trạng thái và tổng giá của các đơn hàng đã đặt.</p>
+                    </div>
+
+                    <div class="orders-grid" th:if="${orderHistory != null and !#lists.isEmpty(orderHistory)}">
+                        <div class="order-card" th:each="order : ${orderHistory}">
+                            <div class="order-card-main">
+                                <div class="order-card-id">
+                                    <span>Mã đơn</span>
+                                    <strong th:text="${order.id}"></strong>
+                                </div>
+                                <div class="order-card-date">
+                                    <span>Ngày</span>
+                                    <strong th:text="${#temporals.format(order.createdAt, 'dd/MM/yyyy HH:mm')}"></strong>
+                                </div>
+                                <div class="order-card-total">
+                                    <span>Tổng</span>
+                                    <strong th:text="${#numbers.formatDecimal(order.totalAmount, 0, 'COMMA', 2, 'POINT')}"></strong>
+                                </div>
+                            </div>
+                            <div class="order-card-meta">
+                                <div>
+                                    <span>Thanh toán</span>
+                                    <strong th:text="${order.paymentMethod == 'saved_card' or order.paymentMethod == 'credit' ? 'Credit card' : order.paymentMethod == 'saved_bank' ? 'Bank transfer' : order.paymentMethod == 'cod' ? 'Cash on delivery' : order.paymentMethod}"></strong>
+                                </div>
+                                <div>
+                                    <span>Trạng thái</span>
+                                    <span class="status-badge"
+                                          th:attr="data-status=${order.status == null ? '' : #strings.toLowerCase(order.status)}"
+                                          th:text="${order.status == null ? 'Unknown' : #strings.equalsIgnoreCase(order.status, 'pending') ? 'Pending' : #strings.equalsIgnoreCase(order.status, 'processing') ? 'Processing' : #strings.equalsIgnoreCase(order.status, 'completed') ? 'Completed' : #strings.equalsIgnoreCase(order.status, 'cancelled') ? 'Cancelled' : order.status}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="orders-empty" th:if="${orderHistory == null or #lists.isEmpty(orderHistory)}">
+                        <div class="empty-card">
+                            <p>Chưa có đơn hàng nào.</p>
+                            <p class="empty-card-subtitle">Hãy đặt hàng để lưu lại lịch sử đơn hàng của bạn.</p>
+                        </div>
+                    </div>
+                </div><!-- /.orders-pane -->
+
 
     <!-- Footer -->
     <footer class="store-footer">
