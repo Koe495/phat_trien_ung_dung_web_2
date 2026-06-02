@@ -36,3 +36,8 @@
 
         colorInputs.forEach(input => input.addEventListener('change', updateBuilder));
         storageInputs.forEach(input => input.addEventListener('change', updateBuilder));
+		document.querySelectorAll('input[name="color"]').forEach(radio => {
+		    radio.addEventListener('change', function() {
+		        document.getElementById('selectedColorId').value = this.value;
+		    });
+		});

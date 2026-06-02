@@ -35,9 +35,12 @@
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                 </button>
             </div>
-            <button class="icon-btn" aria-label="Giỏ hàng">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
-            </button>
+            <a th:href="@{/cart}" class="icon-btn cart-btn" aria-label="Giỏ hàng">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span class="cart-badge"
+                      th:if="${loggedInUser != null and cartCount != null and cartCount > 0}"
+                      th:text="${cartCount}"></span>
+            </a>
             <!-- Chưa đăng nhập -->
 <a th:unless="${loggedInUser != null}"
    th:href="@{/login}"
@@ -168,10 +171,10 @@
                       th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + '₫'">
                 </span>
 
-                <button class="buy-btn"
-                        th:data-id="${product.id}">
+                <a class="buy-btn"
+                   th:href="@{/product/{slug}(slug=${product.slug})}">
                     Mua ngay
-                </button>
+                </a>
 
             </div>
 
@@ -246,10 +249,10 @@
                       th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + '₫'">
                 </span>
 
-                <button class="buy-btn"
-                        th:data-id="${product.id}">
+                <a class="buy-btn"
+                   th:href="@{/product/{slug}(slug=${product.slug})}">
                     Mua ngay
-                </button>
+                </a>
 
             </div>
 
@@ -324,10 +327,10 @@
                       th:text="${#numbers.formatDecimal(product.price,0,'COMMA',0,'POINT')} + '₫'">
                 </span>
 
-                <button class="buy-btn"
-                        th:data-id="${product.id}">
+                <a class="buy-btn"
+                   th:href="@{/product/{slug}(slug=${product.slug})}">
                     Mua ngay
-                </button>
+                </a>
 
             </div>
 

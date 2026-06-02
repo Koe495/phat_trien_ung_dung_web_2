@@ -1,16 +1,10 @@
 package thicuoiki2.phannhattan.com.nexus.store.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
-import java.util.List;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "categories")
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Category {
 
     @Id
@@ -20,54 +14,28 @@ public class Category {
     @Column(nullable = false, length = 100)
     private String name;
 
-    @Column(nullable = false, unique = true, length = 100)
+    @Column(nullable = false, length = 100, unique = true)
     private String slug;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Quan hệ 1-Nhiều với Product (1 danh mục có nhiều sản phẩm)
-    // Ở giai đoạn này chúng ta tạm mapped để liên kết bảng, có thể chưa cần dùng tới trong View
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private List<Product> products;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 
-	public Integer getId() {
-		return id;
-	}
+    // Getters & Setters
+    public Integer getId() { return id; }
+    public void setId(Integer id) { this.id = id; }
 
-	public void setId(Integer id) {
-		this.id = id;
-	}
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-	public String getName() {
-		return name;
-	}
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
-	public String getSlug() {
-		return slug;
-	}
-
-	public void setSlug(String slug) {
-		this.slug = slug;
-	}
-
-	public String getDescription() {
-		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public List<Product> getProducts() {
-		return products;
-	}
-
-	public void setProducts(List<Product> products) {
-		this.products = products;
-	}
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 }

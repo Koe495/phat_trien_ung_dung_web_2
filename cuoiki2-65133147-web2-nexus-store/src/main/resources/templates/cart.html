@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Giỏ hàng</title>
+    <link rel="stylesheet" th:href="@{/css/cart.css}">
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <svg class="custom-cursor-hexagon" id="customCursorHexagon" viewBox="0 0 24 24">
+            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <a th:href="@{/}" class="logo-area">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            NEXUS
+        </a>
+
+        <nav class="primary-nav">
+            <a th:href="@{/}"        data-text="Trang chủ"><span>Trang chủ</span></a>
+            <a th:href="@{/products}" data-text="Sản phẩm"><span>Sản phẩm</span></a>
+            <a th:href="@{/support}"  data-text="Hỗ trợ"><span>Hỗ trợ</span></a>
+        </nav>
+
+        <div class="header-actions">
+            <a th:href="@{/cart}" class="icon-btn cart-btn active-cart" aria-label="Giỏ hàng">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                <span class="cart-badge"
+                      th:if="${loggedInUser != null and cartCount != null and cartCount > 0}"
+                      th:text="${cartCount}"></span>
+            </a>
+            <a th:unless="${loggedInUser != null}" th:href="@{/login}" class="icon-btn" aria-label="Tài khoản">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </a>
+            <a th:if="${loggedInUser != null}" th:href="@{/user}" class="icon-btn user-avatar-btn"
+               th:text="${#strings.substring(loggedInUser.lastName, 0, 1)}"></a>
+        </div>
+    </header>
+
+    <main class="cart-layout">
+        <h1 class="page-title">Giỏ hàng của bạn</h1>
+
+        <!-- Giỏ hàng trống -->
+        <div class="cart-empty" th:if="${cartItems == null or cartItems.isEmpty()}">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            <p>Giỏ hàng của bạn đang trống.</p>
+            <a th:href="@{/products}" class="btn-checkout">Khám phá sản phẩm</a>
+        </div>
+
+        <!-- Có sản phẩm -->
+        <div class="cart-container" th:if="${cartItems != null and !cartItems.isEmpty()}">
+
+            <!-- Form bọc toàn bộ danh sách để submit các item đã chọn -->
+            <form id="cartSelectForm" th:action="@{/checkout}" method="GET">
+
+                <!-- Toolbar chọn tất cả + nút checkout -->
+                <div class="cart-toolbar">
+                    <label class="select-all-label">
+                        <input type="checkbox" id="selectAllCheckbox">
+                        <span>Chọn tất cả</span>
+                    </label>
+                    <button type="submit" class="btn-checkout-selected" id="btnCheckoutSelected" disabled>
+                        Thanh toán mục đã chọn
+                    </button>
+                </div>
+
+                <!-- Danh sách sản phẩm -->
+                <div class="cart-items">
+                    <div class="cart-item" th:each="item : ${cartItems}" th:data-id="${item.id}">
+
+                        <!-- Checkbox chọn -->
+                        <label class="item-select">
+                            <input type="checkbox" name="selectedItems" th:value="${item.id}"
+                                   class="item-checkbox">
+                        </label>
+
+                        <!-- Thumbnail -->
+                        <div class="item-image" th:style="'background:' + ${item.product.thumbnailBg}"></div>
+
+                        <!-- Thông tin -->
+                        <div class="item-details">
+                            <h3 class="item-name" th:text="${item.product.name}"></h3>
+                            <p class="item-specs">
+                                <span th:if="${item.color != null}"
+                                      th:text="${item.color.colorName}">
+                                </span>
+                                <span th:if="${item.color != null}" class="color-dot"
+                                      th:style="'background:' + ${item.color.colorHex}">
+                                </span>
+                            </p>
+                            <p class="item-price"
+                               th:text="${#numbers.formatDecimal(item.product.price, 0, 'COMMA', 0, 'POINT')} + '₫'">
+                            </p>
+                        </div>
+
+                        <!-- Số lượng + Xoá -->
+                        <div class="item-actions">
+                            <div class="qty-control">
+                                <form th:action="@{/cart/update}" method="POST" style="display:contents;">
+                                    <input type="hidden" name="itemId"   th:value="${item.id}">
+                                    <input type="hidden" name="quantity" th:value="${item.quantity - 1}">
+                                    <button type="submit" class="qty-btn" th:disabled="${item.quantity <= 1}">−</button>
+                                </form>
+                                <span class="qty-input" th:text="${item.quantity}">1</span>
+                                <form th:action="@{/cart/update}" method="POST" style="display:contents;">
+                                    <input type="hidden" name="itemId"   th:value="${item.id}">
+                                    <input type="hidden" name="quantity" th:value="${item.quantity + 1}">
+                                    <button type="submit" class="qty-btn">+</button>
+                                </form>
+                            </div>
+                            <form th:action="@{/cart/remove}" method="POST">
+                                <input type="hidden" name="itemId" th:value="${item.id}">
+                                <button type="submit" class="btn-remove">Xóa</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </form>
+
+            <!-- Tổng quan đơn hàng -->
+            <div class="order-summary">
+                <h2 class="summary-title">Tổng quan đơn hàng</h2>
+                <div class="summary-row"><span>Tạm tính</span>
+                    <span id="summarySubtotal"
+                          th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                </div>
+                <div class="summary-row"><span>Phí vận chuyển</span><span>Miễn phí</span></div>
+                <div class="summary-row total">
+                    <span>Tổng cộng</span>
+                    <span id="summaryTotal"
+                          th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                </div>
+                <!-- data-price gắn vào mỗi item để JS tính lại -->
+                <div style="display:none" id="itemPrices">
+                    <span th:each="item : ${cartItems}"
+                          th:data-id="${item.id}"
+                          th:data-price="${item.product.price}"
+                          th:data-qty="${item.quantity}"
+                          class="item-price-data">
+                    </span>
+                </div>
+                <p class="summary-note" id="summaryNote">Chọn sản phẩm để thanh toán</p>
+                <button type="submit" form="cartSelectForm"
+                        class="btn-checkout" id="btnCheckoutSummary" disabled>
+                    Tiến hành thanh toán
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <script th:src="@{/js/cart.js}"></script>
+</body>
+</html>

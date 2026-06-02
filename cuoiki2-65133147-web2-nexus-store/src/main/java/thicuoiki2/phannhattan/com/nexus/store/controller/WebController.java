@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import thicuoiki2.phannhattan.com.nexus.store.entity.Product;
 import thicuoiki2.phannhattan.com.nexus.store.entity.User;
 import thicuoiki2.phannhattan.com.nexus.store.repository.ProductRepository;
+import thicuoiki2.phannhattan.com.nexus.store.service.CartService;
 import thicuoiki2.phannhattan.com.nexus.store.service.PaymentService;
 import thicuoiki2.phannhattan.com.nexus.store.service.UserService;
 
@@ -16,21 +17,29 @@ import java.util.List;
 @Controller
 public class WebController {
 
-    @Autowired
-    private ProductRepository productRepository;
+    @Autowired private ProductRepository productRepository;
+    @Autowired private UserService        userService;
+    @Autowired private PaymentService     paymentService;
+    @Autowired private CartService        cartService;
 
-    @Autowired
-    private UserService userService;
-
-    @Autowired
-    private PaymentService paymentService;
+    /* Helper dùng chung: tính tổng số lượng hàng trong giỏ */
+    private void addCartCount(User user, Model model) {
+        if (user != null) {
+            int count = cartService.getCartItems(user).stream()
+                    .mapToInt(item -> item.getQuantity())
+                    .sum();
+            model.addAttribute("cartCount", count);
+        }
+    }
 
     /* ------------------------------------------------------------------ */
     /*  Trang chủ                                                           */
     /* ------------------------------------------------------------------ */
     @GetMapping("/")
     public String home(HttpSession session, Model model) {
-        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("loggedInUser", loggedInUser);
+        addCartCount(loggedInUser, model);
         return "index";
     }
 
@@ -39,9 +48,11 @@ public class WebController {
     /* ------------------------------------------------------------------ */
     @GetMapping("/products")
     public String products(HttpSession session, Model model) {
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
         List<Product> activeProducts = productRepository.findByStatus("active");
         model.addAttribute("products", activeProducts);
-        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        model.addAttribute("loggedInUser", loggedInUser);
+        addCartCount(loggedInUser, model);
         return "products";
     }
 
@@ -50,7 +61,9 @@ public class WebController {
     /* ------------------------------------------------------------------ */
     @GetMapping("/support")
     public String support(HttpSession session, Model model) {
-        model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+        User loggedInUser = (User) session.getAttribute("loggedInUser");
+        model.addAttribute("loggedInUser", loggedInUser);
+        addCartCount(loggedInUser, model);
         return "support";
     }
 
@@ -64,6 +77,7 @@ public class WebController {
         model.addAttribute("loggedInUser", loggedInUser);
         model.addAttribute("savedCards", paymentService.getCardsByUser(loggedInUser));
         model.addAttribute("savedBanks", paymentService.getBanksByUser(loggedInUser));
+        addCartCount(loggedInUser, model);
         return "user";
     }
 
@@ -78,8 +92,10 @@ public class WebController {
             session.setAttribute("loggedInUser", saved);
             return "redirect:/user?success=profile";
         } catch (Exception e) {
-            model.addAttribute("loggedInUser", session.getAttribute("loggedInUser"));
+            User loggedInUser = (User) session.getAttribute("loggedInUser");
+            model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+            addCartCount(loggedInUser, model);
             return "user";
         }
     }
@@ -102,6 +118,7 @@ public class WebController {
         } catch (Exception e) {
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+            addCartCount(loggedInUser, model);
             return "user";
         }
     }
@@ -123,6 +140,7 @@ public class WebController {
         } catch (Exception e) {
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+            addCartCount(loggedInUser, model);
             return "user";
         }
     }
@@ -144,6 +162,7 @@ public class WebController {
         } catch (Exception e) {
             model.addAttribute("loggedInUser", loggedInUser);
             model.addAttribute("errorMsg", e.getMessage());
+            addCartCount(loggedInUser, model);
             return "user";
         }
     }

@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS - Thanh toán an toàn</title>
+    <link rel="stylesheet" th:href="@{/css/checkout.css}">
+</head>
+<body>
+
+    <!-- Custom Cursor -->
+    <div class="custom-cursor" id="customCursor">
+        <svg class="custom-cursor-hexagon" id="customCursorHexagon" viewBox="0 0 24 24">
+            <polygon points="12,2 21,7 21,17 12,22 3,17 3,7" fill="none" stroke-width="2" stroke-linejoin="round"/>
+        </svg>
+    </div>
+
+    <!-- Header -->
+    <header class="main-header">
+        <a th:href="@{/}" class="logo-area">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+            NEXUS
+        </a>
+    </header>
+
+    <main class="checkout-layout">
+
+        <!-- ===================================================
+             Đặt hàng thành công
+             =================================================== -->
+        <div class="success-overlay" th:if="${orderSuccess != null and orderSuccess}">
+            <svg class="success-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            <h1 class="success-title">Đặt hàng thành công!</h1>
+            <p class="success-msg">
+                Cảm ơn bạn đã mua sắm tại NEXUS. Mã đơn hàng của bạn là
+                <strong th:text="'#' + ${orderId}"></strong>.
+                Chi tiết đơn hàng đã được gửi vào email của bạn.
+            </p>
+            <a th:href="@{/}" class="btn-home">Trở về Trang chủ</a>
+        </div>
+
+        <!-- ===================================================
+             Form thanh toán
+             =================================================== -->
+        <div class="checkout-container" th:if="${orderSuccess == null or !orderSuccess}">
+
+            <div class="checkout-form-area">
+                <form id="checkoutForm" th:action="@{/checkout/place-order}" method="POST">
+
+                    <!-- Truyền selectedItems từ cart nếu có -->
+                    <input type="hidden" name="selectedItems" th:each="id : ${selectedItems}" th:value="${id}">
+
+                    <!-- Lỗi -->
+                    <div th:if="${errorMsg != null}"
+                         style="color:#ff3b30;font-size:14px;margin-bottom:1.25rem;
+                                padding:10px;border:1px solid #ff3b30;border-radius:8px;"
+                         th:text="${errorMsg}">
+                    </div>
+
+                    <!-- ── Thông tin giao hàng ── -->
+                    <h2 class="section-title">Thông tin giao hàng</h2>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="text" id="lastName" name="lastName" class="form-input"
+                                   placeholder=" " required autocomplete="family-name"
+                                   th:value="${loggedInUser != null ? loggedInUser.lastName : ''}">
+                            <label for="lastName" class="form-label" id="label-lastName">Họ</label>
+                            <div class="notched-outline">
+                                <div class="notched-outline-leading"></div>
+                                <div class="notched-outline-notch" id="notch-lastName"></div>
+                                <div class="notched-outline-trailing"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="text" id="firstName" name="firstName" class="form-input"
+                                   placeholder=" " required autocomplete="given-name"
+                                   th:value="${loggedInUser != null ? loggedInUser.firstName : ''}">
+                            <label for="firstName" class="form-label" id="label-firstName">Tên</label>
+                            <div class="notched-outline">
+                                <div class="notched-outline-leading"></div>
+                                <div class="notched-outline-notch" id="notch-firstName"></div>
+                                <div class="notched-outline-trailing"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="email" id="email" name="email" class="form-input"
+                                   placeholder=" " required autocomplete="email"
+                                   th:value="${loggedInUser != null ? loggedInUser.email : ''}">
+                            <label for="email" class="form-label" id="label-email">Email</label>
+                            <div class="notched-outline">
+                                <div class="notched-outline-leading"></div>
+                                <div class="notched-outline-notch" id="notch-email"></div>
+                                <div class="notched-outline-trailing"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" id="phone" name="phone" class="form-input"
+                                   placeholder=" " required autocomplete="tel"
+                                   th:value="${loggedInUser != null ? loggedInUser.phone : ''}">
+                            <label for="phone" class="form-label" id="label-phone">Số điện thoại</label>
+                            <div class="notched-outline">
+                                <div class="notched-outline-leading"></div>
+                                <div class="notched-outline-notch" id="notch-phone"></div>
+                                <div class="notched-outline-trailing"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="text" id="address" name="address" class="form-input"
+                               placeholder=" " required autocomplete="street-address">
+                        <label for="address" class="form-label" id="label-address">Địa chỉ nhận hàng</label>
+                        <div class="notched-outline">
+                            <div class="notched-outline-leading"></div>
+                            <div class="notched-outline-notch" id="notch-address"></div>
+                            <div class="notched-outline-trailing"></div>
+                        </div>
+                    </div>
+
+                    <!-- ── Phương thức thanh toán ── -->
+                    <h2 class="section-title" style="margin-top:2rem;">Phương thức thanh toán</h2>
+
+                    <div class="payment-methods">
+                        <th:block th:if="${loggedInUser != null and savedCards != null and !savedCards.isEmpty()}">
+                            <label class="payment-option" th:each="card : ${savedCards}">
+                                <input type="radio" name="payment" value="saved_card"
+                                       th:data-card-id="${card.id}">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                                <span th:text="${card.cardNetwork + ' ' + card.cardNumber}"></span>
+                            </label>
+                        </th:block>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="credit"
+                                   th:checked="${savedCards == null or savedCards.isEmpty()}">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect><line x1="1" y1="10" x2="23" y2="10"></line></svg>
+                            <span>Thẻ tín dụng / Thẻ ghi nợ</span>
+                        </label>
+
+                        <label class="payment-option">
+                            <input type="radio" name="payment" value="cod">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                            <span>Thanh toán khi nhận hàng (COD)</span>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn-submit-order">Đặt hàng ngay</button>
+                </form>
+            </div>
+
+            <!-- Mini summary -->
+            <div class="mini-summary">
+                <h2 class="section-title" style="border:none;padding:0;margin-bottom:1rem;">Đơn hàng</h2>
+                <div class="mini-item" th:each="item : ${cartItems}">
+                    <span class="mini-item-name"
+                          th:text="${item.product.name + (item.color != null ? ' · ' + item.color.colorName : '') + ' ×' + item.quantity}">
+                    </span>
+                    <span th:text="${#numbers.formatDecimal(item.product.price * item.quantity, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                </div>
+                <div class="summary-row"><span>Phí vận chuyển</span><span>Miễn phí</span></div>
+                <div class="summary-total">
+                    <span>Tổng cộng</span>
+                    <span th:text="${#numbers.formatDecimal(subtotal, 0, 'COMMA', 0, 'POINT')} + '₫'"></span>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script th:src="@{/js/checkout.js}"></script>
+</body>
+</html>
